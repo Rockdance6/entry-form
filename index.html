@@ -529,6 +529,11 @@ document.getElementById("langSwitcher").addEventListener('change', e => {
 document.getElementById("waiverForm").onsubmit = async function (e) {
   e.preventDefault();
 
+  const submitBtn = document.getElementById("submitBtn");
+  if (submitBtn.disabled) return false; // 如果已經被 disable，不再送出
+  submitBtn.disabled = true;
+  submitBtn.textContent = "送出中...";
+
   if (signaturePad1.isEmpty()) {
     alert(LANGDATA.errSign1[currentLang]);
     return false;
@@ -564,7 +569,7 @@ document.getElementById("waiverForm").onsubmit = async function (e) {
   formData.append("同意條款1", document.getElementById("agree1").checked ? "Y" : "N");
   formData.append("同意條款2", document.getElementById("agree2").checked ? "Y" : "N");
 
-  const url = 'https://script.google.com/macros/s/AKfycbzAM-tEn52Av46i1tzFPw6j6musxMcIZCVD_73jlF3-pMQL2kEXTN4s0GvAQFrNIG-W/exec';
+  const url = 'https://script.google.com/macros/s/AKfycbzWIAAoBebTYnVkiNb9tD_f3EfK60f8x5EitfIxGAkPD1pXaXKhJvKu3WppweDn4jRl/exec';
 
   try {
     const res = await fetch(url, {

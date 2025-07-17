@@ -159,6 +159,9 @@
   </form>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+
 <script>
 const LANGDATA = {
   siteTitle: {
@@ -386,6 +389,7 @@ const LANGDATA = {
   }
 };
 
+
 let currentLang = 'zh-TW';
 let signaturePad1, signaturePad2;
 
@@ -405,7 +409,6 @@ function reinitSignaturePads() {
   signaturePad2 = new SignaturePad(canvas2, { backgroundColor: "#fff" });
   document.getElementById("clear1").onclick = () => signaturePad1.clear();
   document.getElementById("clear2").onclick = () => signaturePad2.clear();
-  // 禁止選取與拖曳影響簽名體驗
   canvas1.style.userSelect = "none";
   canvas2.style.userSelect = "none";
   canvas1.onselectstart = canvas2.onselectstart = () => false;
@@ -417,37 +420,23 @@ function showStep(step) {
     const el = document.getElementById(`step-${i}`);
     if (el) el.style.display = i === step ? "block" : "none";
   }
-  // 最後頁特殊處理
   document.getElementById("final-page").style.display = step === 5 ? "block" : "none";
-  // 語言切換器只在第一頁顯示
   document.getElementById("langSwitcherRow").style.display = step === 1 ? "flex" : "none";
-
-  // 滾動回頂端
   window.scrollTo({ top: 0, behavior: "auto" });
-
-  // 進入簽名頁才重置簽名板
   if (step === 4) reinitSignaturePads();
 }
 
 function setLang(lang) {
   currentLang = lang;
-
-  // 標題
   document.getElementById("siteTitle").innerText = LANGDATA.siteTitle[lang];
   document.getElementById("pageTitle1").innerText = LANGDATA.pageTitle1[lang];
   document.getElementById("pageTitle2").innerText = LANGDATA.pageTitle2[lang];
   document.getElementById("pageTitle3").innerText = LANGDATA.pageTitle3[lang];
   document.getElementById("pageTitle4").innerText = LANGDATA.pageTitle4[lang];
-
-  // 條款
   document.getElementById("terms1").innerHTML = LANGDATA.terms1[lang];
   document.getElementById("terms2").innerHTML = LANGDATA.terms2[lang];
-
-  // 同意文字
   document.getElementById("agree1text").innerText = LANGDATA.agree1text[lang];
   document.getElementById("agree2text").innerText = LANGDATA.agree2text[lang];
-
-  // 表單欄位
   document.getElementById("labelName").innerText = LANGDATA.labelName[lang];
   document.getElementById("labelIdnumber").innerText = LANGDATA.labelIdnumber[lang];
   document.getElementById("labelGender").innerText = LANGDATA.labelGender[lang];
@@ -464,33 +453,28 @@ function setLang(lang) {
   document.getElementById("clear1").innerText = LANGDATA.clearSign[lang];
   document.getElementById("clear2").innerText = LANGDATA.clearSign[lang];
   document.getElementById("submitBtn").innerText = LANGDATA.submitBtn[lang];
-
-  // 按鈕文字
   document.getElementById("to-step-1").innerText = LANGDATA.prevBtn[lang];
   document.getElementById("to-step-2b").innerText = LANGDATA.prevBtn[lang];
   document.getElementById("to-step-3b").innerText = LANGDATA.prevBtn[lang];
   document.getElementById("to-step-2").innerText = LANGDATA.nextBtn[lang];
   document.getElementById("to-step-3").innerText = LANGDATA.nextBtn[lang];
   document.getElementById("to-step-4").innerText = LANGDATA.nextBtn[lang];
-
   document.getElementById("successTitle").innerText = LANGDATA.successTitle[lang];
   document.getElementById("successMsg").innerHTML = LANGDATA.successMsg[lang];
   document.getElementById("more-btn").innerText = LANGDATA.moreBtn[lang];
 }
 
+// --- 一般頁面載入 ---
 window.onload = () => {
   setLang('zh-TW');
   showStep(1);
-
-  // 初始化簽名板
   reinitSignaturePads();
-
   window.addEventListener('resize', () => {
     if (signaturePad1 && signaturePad2) reinitSignaturePads();
   });
 };
 
-// 按鈕事件綁定
+// --- 多語切換、分頁按鈕 ---
 document.getElementById("to-step-2").onclick = () => {
   if (!document.getElementById("agree1").checked) return alert(LANGDATA.errFill[currentLang]);
   showStep(2);
@@ -502,7 +486,6 @@ document.getElementById("to-step-3").onclick = () => {
 };
 document.getElementById("to-step-2b").onclick = () => showStep(2);
 document.getElementById("to-step-4").onclick = () => {
-  // 簡單檢查必要欄位是否填寫
   const name = document.getElementById("name").value.trim();
   const idnumber = document.getElementById("idnumber").value.trim();
   const gender = document.querySelector('input[name="gender"]:checked');
@@ -511,7 +494,6 @@ document.getElementById("to-step-4").onclick = () => {
   const emergency_contact = document.getElementById("emergency_contact").value.trim();
   const emergency_relation = document.getElementById("emergency_relation").value.trim();
   const emergency_phone = document.getElementById("emergency_phone").value.trim();
-
   if (!name || !idnumber || !gender || !dob || !phone || !emergency_contact || !emergency_relation || !emergency_phone) {
     alert(LANGDATA.errFill[currentLang]);
     return;
@@ -520,22 +502,24 @@ document.getElementById("to-step-4").onclick = () => {
 };
 document.getElementById("to-step-3b").onclick = () => showStep(3);
 document.getElementById("more-btn").onclick = () => window.location.reload();
-
 document.getElementById("langSwitcher").addEventListener('change', e => {
   setLang(e.target.value);
   showStep(1);
 });
 
+// ====== 這是你要的送出功能（整合 PDF/浮水印/bug fix）======
 document.getElementById("waiverForm").onsubmit = async function (e) {
   e.preventDefault();
 
   const submitBtn = document.getElementById("submitBtn");
-  if (submitBtn.disabled) return false; // 如果已經被 disable，不再送出
+  if (submitBtn.disabled) return false;
   submitBtn.disabled = true;
   submitBtn.textContent = "送出中...";
 
   if (signaturePad1.isEmpty()) {
     alert(LANGDATA.errSign1[currentLang]);
+    submitBtn.disabled = false;
+    submitBtn.textContent = LANGDATA.submitBtn[currentLang];
     return false;
   }
   const dob = document.getElementById("dob").value;
@@ -547,48 +531,106 @@ document.getElementById("waiverForm").onsubmit = async function (e) {
     const m = today.getMonth() - birth.getMonth();
     if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
   }
-
   if (age < 18 && signaturePad2.isEmpty()) {
     alert(LANGDATA.errSign2[currentLang]);
+    submitBtn.disabled = false;
+    submitBtn.textContent = LANGDATA.submitBtn[currentLang];
     return false;
   }
 
-  // 使用 FormData 傳送資料
-  const formData = new FormData();
-  formData.append("lang", currentLang);
-  formData.append("姓名", document.getElementById("name").value.trim());
-  formData.append("身分證字號", document.getElementById("idnumber").value.trim());
-  formData.append("性別", document.querySelector('input[name="gender"]:checked')?.value || '');
-  formData.append("出生年月日", dob);
-  formData.append("連絡電話", document.getElementById("phone").value.trim());
-  formData.append("緊急聯絡人", document.getElementById("emergency_contact").value.trim());
-  formData.append("緊急聯絡人關係", document.getElementById("emergency_relation").value.trim());
-  formData.append("緊急聯絡人電話", document.getElementById("emergency_phone").value.trim());
-  formData.append("參與者簽名", signaturePad1.toDataURL());
-  formData.append("家長監護人簽名", signaturePad2.toDataURL());
-  formData.append("同意條款1", document.getElementById("agree1").checked ? "Y" : "N");
-  formData.append("同意條款2", document.getElementById("agree2").checked ? "Y" : "N");
+  const name = document.getElementById("name").value.trim();
+  const now = new Date();
+  const yyyy = now.getFullYear();
+  const MM = String(now.getMonth() + 1).padStart(2, '0');
+  const dd = String(now.getDate()).padStart(2, '0');
+  const hh = String(now.getHours()).padStart(2, '0');
+  const mm = String(now.getMinutes()).padStart(2, '0');
+  const ss = String(now.getSeconds()).padStart(2, '0');
+  const timestamp = `${yyyy}-${MM}-${dd} ${hh}:${mm}:${ss}`;
+  const rand = Math.floor(Math.random() * 9000 + 1000);
+  const sn = `${yyyy}${MM}${dd}${hh}${mm}${ss}${rand}`;
+  const website = "rockdance6.github.io";
+  const watermark = `時間：${timestamp}\n流水號：${sn}\n網站：${website}\n姓名：${name}`;
 
-  const url = 'https://script.google.com/macros/s/AKfycbzWIAAoBebTYnVkiNb9tD_f3EfK60f8x5EitfIxGAkPD1pXaXKhJvKu3WppweDn4jRl/exec';
+  // ====== 讓畫面在截圖時隱形，不讓用戶看到切換 ======
+  document.querySelector('.main-card').style.opacity = 0;
 
   try {
-    const res = await fetch(url, {
-      method: "POST",
-      body: formData
-    });
+    async function screenshotStep(stepId) {
+      for (let i = 1; i <= 4; i++) {
+        const el = document.getElementById(`step-${i}`);
+        if (el) el.style.display = (i === stepId ? "block" : "none");
+      }
+      await new Promise(r => setTimeout(r, 300));
+      const div = document.getElementById(`step-${stepId}`);
+      const canvas = await html2canvas(div, {backgroundColor: '#fff'});
+      const ctx = canvas.getContext('2d');
+      ctx.font = "bold 16px Noto Sans TC, Microsoft JhengHei, sans-serif";
+      ctx.fillStyle = "rgba(60,60,60,0.8)";
+      ctx.textAlign = "right";
+      const lines = watermark.split('\n');
+      lines.forEach((line, idx) => {
+        ctx.fillText(line, canvas.width - 24, canvas.height - 18 - (lines.length - 1 - idx) * 22);
+      });
+      return canvas;
+    }
+    const canvasList = [];
+    for (let i = 1; i <= 4; i++) {
+      const canvas = await screenshotStep(i);
+      canvasList.push(canvas);
+    }
+    document.querySelector('.main-card').style.opacity = 1;
+    showStep(4);
+
+    const { PDFDocument } = window['pdf-lib'];
+    const pdfDoc = await PDFDocument.create();
+    for (const canvas of canvasList) {
+      const imgData = canvas.toDataURL('image/png');
+      const pngImage = await pdfDoc.embedPng(imgData);
+      const page = pdfDoc.addPage([pngImage.width, pngImage.height]);
+      page.drawImage(pngImage, { x: 0, y: 0, width: pngImage.width, height: pngImage.height });
+    }
+    const pdfBytes = await pdfDoc.save();
+    const pdfBase64 = "data:application/pdf;base64," + btoa(String.fromCharCode(...pdfBytes));
+
+    const formData = new FormData();
+    formData.append("lang", currentLang);
+    formData.append("姓名", name);
+    formData.append("身分證字號", document.getElementById("idnumber").value.trim());
+    formData.append("性別", document.querySelector('input[name="gender"]:checked')?.value || '');
+    formData.append("出生年月日", dob);
+    formData.append("連絡電話", document.getElementById("phone").value.trim());
+    formData.append("緊急聯絡人", document.getElementById("emergency_contact").value.trim());
+    formData.append("緊急聯絡人關係", document.getElementById("emergency_relation").value.trim());
+    formData.append("緊急聯絡人電話", document.getElementById("emergency_phone").value.trim());
+    formData.append("參與者簽名", signaturePad1.toDataURL());
+    formData.append("家長監護人簽名", signaturePad2.toDataURL());
+    formData.append("同意條款1", document.getElementById("agree1").checked ? "Y" : "N");
+    formData.append("同意條款2", document.getElementById("agree2").checked ? "Y" : "N");
+    formData.append("同意書PDF", pdfBase64);
+    formData.append("流水號", sn);
+    formData.append("簽署時間", timestamp);
+
+    const url = 'https://script.google.com/macros/s/AKfycbzWIAAoBebTYnVkiNb9tD_f3EfK60f8x5EitfIxGAkPD1pXaXKhJvKu3WppweDn4jRl/exec';
+
+    const res = await fetch(url, { method: "POST", body: formData });
     const txt = await res.text();
     if (res.ok && (txt.trim() === "OK" || txt.toLowerCase().includes("success"))) {
       showStep(5);
       return false;
     } else {
       alert(LANGDATA.errFail[currentLang] + "\n" + txt);
+      submitBtn.disabled = false;
+      submitBtn.textContent = LANGDATA.submitBtn[currentLang];
       return false;
     }
   } catch (err) {
+    console.error(err);
     alert(LANGDATA.errError[currentLang]);
+    submitBtn.disabled = false;
+    submitBtn.textContent = LANGDATA.submitBtn[currentLang];
+    document.querySelector('.main-card').style.opacity = 1;
     return false;
   }
 };
 </script>
-</body>
-</html>

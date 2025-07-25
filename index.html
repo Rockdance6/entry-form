@@ -1,73 +1,60 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>舞岩抱石攀岩館 責任風險承擔同意書</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.5/dist/signature_pad.umd.min.js"></script>
 <style>
-  body { font-family: 'Noto Sans TC', 'Microsoft JhengHei', 'PingFang TC', sans-serif; background:#f5f7fa; margin:0; color:#232629; }
-  .main-card { background:#fff; max-width:600px; margin:2em auto; border-radius:18px; box-shadow:0 4px 18px #2260a71c; padding:2em 2.2em 1.4em 2.2em; position:relative;}
-  @media (max-width:700px) { .main-card { padding:1.1em 4vw 1.2em 4vw; border-radius:0; margin:0; box-sizing:border-box; } }
-  .site-title { text-align:center; color:#2064bb; font-size:2.6em; font-weight:900; margin-bottom:0.2em; margin-top:0;}
-  h2.page-title { text-align:center; color:#2064bb; margin:0 0 1em 0; font-size:1.28em; font-weight:700;}
-  .terms-block, .terms-block * { text-align:left !important; }
-  .terms-block { background:#e9f0fb; border-radius:10px; padding:1.6em 1.3em 1.3em 1.3em; margin-bottom:1.1em; font-size:1.11em; color: #000000 !important;}
-  .terms-block h3, .terms-block h4 {  color:#2064bb !important; margin-top:0.7em; }
-  .terms-block h3 { margin-bottom:0.2em; font-size:1.08em; border-left:4px solid #2064bb; padding-left:0.5em;}
-  .terms-block .sub-desc { margin:0.35em 0 0.9em 0.8em; color:#000000 !important; font-size:0.97em; line-height:1.7;}
-  .terms-block ul, .terms-block ol { padding-left:1.4em; }
-  .terms-block li { margin-bottom:0.44em;}
-  .checkbox-block { background:#f7fbff; border-radius:8px; padding:1em 1.2em; margin-bottom:1.2em; }
-  .radio-group { display:flex; gap:2em; margin:0.2em 0 0.85em 0; }
-  .nav-btns { margin-top:1.5em; display:flex; justify-content:space-between; gap:0.6em; }
-  .nav-btns button, .submit-btn { background:#2064bb; color:#fff; border:none; padding:0.8em 2.1em; border-radius:999px; font-size:1.13em; font-weight:bold; box-shadow:0 2px 10px #0c237a18; cursor:pointer;}
-  .submit-btn { width:100%; margin-top:1.6em; }
-  .canvas-block { margin:1.7em 0 1.2em 0;}
-  .sign-canvas { border:1.5px solid #b4cdf7; border-radius:10px; width:100%; height:120px; background:#fff; box-shadow:0 2px 8px #3774bb18; touch-action:none; user-select:none !important; -webkit-user-select:none !important; }
-  .canvas-block, .canvas-block *, .sign-canvas { user-select:none !important; -webkit-user-select:none !important; -webkit-touch-callout:none !important; -webkit-tap-highlight-color:transparent !important; }
-  .clear-btn { margin-top:0.6em; background:#999; border:none; color:#fff; border-radius:7px; padding:0.45em 1.5em; font-size:1em;}
-  #final-page { color:#2064bb; font-size:1.13em; text-align:center; margin-top:2em; }
-  #langSwitcherRow {
-    position:absolute; left:0.7em; bottom:1.2em; z-index:10; display:flex; align-items:flex-end; width:160px; pointer-events:auto;
-  }
-  @media (max-width:700px) {
-    #langSwitcherRow { left:0.2em; bottom:0.7em; width:130px;}
-  }
-  #langSwitcher { font-size:1.05em; padding:0.32em 0.5em; border-radius:7px; border:1px solid #b6c2d1;}
-  .form-field {
-    display:flex; flex-direction:column; gap:0.35em; margin-bottom:1.1em;
-  }
-  .form-field label { font-weight:500; margin-bottom:0.18em;}
-  .form-field input[type="text"],
-  .form-field input[type="tel"],
-  .form-field input[type="date"] {
-    font-size:1.08em; padding:0.39em 0.6em; border:1px solid #bdd3ef;
-    border-radius:6px; background:#f8fbfd; margin-top:0.1em; margin-bottom:0.06em;
-    width:100%; box-sizing:border-box;
-  }
-  @media (max-width:600px) {
-    .form-field { gap:0.25em; margin-bottom:0.74em;}
-    .form-field input { font-size:0.99em;}
-  }
+body { font-family: 'Noto Sans TC', 'Microsoft JhengHei', 'PingFang TC', sans-serif; background:#f5f7fa; margin:0; color:#232629; }
+.main-card { background:#fff; max-width:600px; margin:2em auto; border-radius:18px; box-shadow:0 4px 18px #2260a71c; padding:2em 2.2em 1.4em 2.2em; position:relative;}
+@media (max-width:700px) { .main-card { padding:1.1em 4vw 1.2em 4vw; border-radius:0; margin:0; box-sizing:border-box; } }
+.site-title { text-align:center; color:#2064bb; font-size:2.6em; font-weight:900; margin-bottom:0.2em; margin-top:0;}
+h2.page-title { text-align:center; color:#2064bb; margin:0 0 1em 0; font-size:1.28em; font-weight:700;}
+.terms-block, .terms-block * { text-align:left !important; }
+.terms-block { background:#e9f0fb; border-radius:10px; padding:1.6em 1.3em 1.3em 1.3em; margin-bottom:1.1em; font-size:1.11em; color: #000000 !important;}
+.terms-block h3, .terms-block h4 {  color:#2064bb !important; margin-top:0.7em; }
+.terms-block h3 { margin-bottom:0.2em; font-size:1.08em; border-left:4px solid #2064bb; padding-left:0.5em;}
+.terms-block .sub-desc { margin:0.35em 0 0.9em 0.8em; color:#000000 !important; font-size:0.97em; line-height:1.7;}
+.terms-block ul, .terms-block ol { padding-left:1.4em; }
+.terms-block li { margin-bottom:0.44em;}
+.checkbox-block { background:#f7fbff; border-radius:8px; padding:1em 1.2em; margin-bottom:1.2em; }
+.radio-group { display:flex; gap:2em; margin:0.2em 0 0.85em 0; }
+.nav-btns { margin-top:1.5em; display:flex; justify-content:space-between; gap:0.6em; }
+.nav-btns button, .submit-btn { background:#2064bb; color:#fff; border:none; padding:0.8em 2.1em; border-radius:999px; font-size:1.13em; font-weight:bold; box-shadow:0 2px 10px #0c237a18; cursor:pointer;}
+.submit-btn { width:100%; margin-top:1.6em; }
+.canvas-block { margin:1.7em 0 1.2em 0;}
+.sign-canvas { border:1.5px solid #b4cdf7; border-radius:10px; width:100%; height:120px; background:#fff; box-shadow:0 2px 8px #3774bb18; touch-action:none; user-select:none !important; -webkit-user-select:none !important; }
+.canvas-block, .canvas-block *, .sign-canvas { user-select:none !important; -webkit-user-select:none !important; -webkit-touch-callout:none !important; -webkit-tap-highlight-color:transparent !important; }
+.clear-btn { margin-top:0.6em; background:#999; border:none; color:#fff; border-radius:7px; padding:0.45em 1.5em; font-size:1em;}
+#final-page { color:#2064bb; font-size:1.13em; text-align:center; margin-top:2em; }
+#langSwitcherRow { position:absolute; left:0.7em; bottom:1.2em; z-index:10; display:flex; align-items:flex-end; width:160px; pointer-events:auto;}
+@media (max-width:700px) { #langSwitcherRow { left:0.2em; bottom:0.7em; width:130px;} }
+#langSwitcher { font-size:1.05em; padding:0.32em 0.5em; border-radius:7px; border:1px solid #b6c2d1;}
+.form-field { display:flex; flex-direction:column; gap:0.35em; margin-bottom:1.1em;}
+.form-field label { font-weight:500; margin-bottom:0.18em;}
+.form-field input[type="text"], .form-field input[type="tel"], .form-field input[type="date"] { font-size:1.08em; padding:0.39em 0.6em; border:1px solid #bdd3ef; border-radius:6px; background:#f8fbfd; margin-top:0.1em; margin-bottom:0.06em; width:100%; box-sizing:border-box; }
+@media (max-width:600px) { .form-field { gap:0.25em; margin-bottom:0.74em;} .form-field input { font-size:0.99em;}}
 </style>
 </head>
 <body>
 <div class="main-card">
-  <div class="site-title" id="siteTitle">舞岩抱石攀岩館</div>
+  <div class="site-title" id="siteTitle"></div>
   <form id="waiverForm" autocomplete="off">
     <!-- Step 1 -->
     <div id="step-1" style="display:block; position:relative;">
-      <h2 class="page-title" id="pageTitle1">責任與風險承擔同意書</h2>
+      <h2 class="page-title" id="pageTitle1"></h2>
       <div class="terms-block" id="terms1"></div>
       <div class="checkbox-block">
-        <label><input type="checkbox" id="agree1" required> <span id="agree1text"></span></label>
+        <label><input type="checkbox" id="agree1" required=""> <span id="agree1text"></span></label>
       </div>
       <div class="nav-btns">
         <span></span>
-        <button type="button" id="to-step-2">下一頁</button>
+        <button type="button" id="to-step-2"></button>
       </div>
-      <div id="langSwitcherRow">
+      <div id="langSwitcherRow" style="display: flex;">
         <select id="langSwitcher" class="lang-switcher">
           <option value="zh-TW">繁體中文</option>
           <option value="en">English</option>
@@ -77,88 +64,87 @@
     </div>
     <!-- Step 2 -->
     <div id="step-2" style="display:none">
-      <h2 class="page-title" id="pageTitle2">入場須知與安全守則</h2>
+      <h2 class="page-title" id="pageTitle2"></h2>
       <div class="terms-block" id="terms2"></div>
       <div class="checkbox-block">
-        <label><input type="checkbox" id="agree2" required> <span id="agree2text"></span></label>
+        <label><input type="checkbox" id="agree2" required=""> <span id="agree2text"></span></label>
       </div>
       <div class="nav-btns">
-        <button type="button" id="to-step-1">上一頁</button>
-        <button type="button" id="to-step-3">下一頁</button>
+        <button type="button" id="to-step-1"></button>
+        <button type="button" id="to-step-3"></button>
       </div>
     </div>
     <!-- Step 3 -->
     <div id="step-3" style="display:none">
-      <h2 class="page-title" id="pageTitle3">基本資料填寫</h2>
+      <h2 class="page-title" id="pageTitle3"></h2>
       <div class="form-field">
-        <label id="labelName" for="name">姓名</label>
-        <input type="text" id="name" required />
+        <label id="labelName" for="name"></label>
+        <input type="text" id="name" required="">
       </div>
       <div class="form-field">
-        <label id="labelIdnumber" for="idnumber">身分證字號</label>
-        <input type="text" id="idnumber" required />
+        <label id="labelIdnumber" for="idnumber"></label>
+        <input type="text" id="idnumber" required="">
       </div>
       <div class="form-field">
-        <label id="labelGender">性別</label>
+        <label id="labelGender"></label>
         <div class="radio-group" id="genderGroup">
-          <label><input type="radio" name="gender" value="男" required id="genderM" /> <span id="genderMText">男</span></label>
-          <label><input type="radio" name="gender" value="女" required id="genderF" /> <span id="genderFText">女</span></label>
+          <label><input type="radio" name="gender" value="男" required="" id="genderM"> <span id="genderMText"></span></label>
+          <label><input type="radio" name="gender" value="女" required="" id="genderF"> <span id="genderFText"></span></label>
         </div>
       </div>
       <div class="form-field">
-        <label id="labelDob" for="dob">出生年月日</label>
-        <input type="date" id="dob" required />
+        <label id="labelDob" for="dob"></label>
+        <input type="date" id="dob" required="">
         <span id="dobFormatTip" style="color:#6684b5; font-size:0.96em; margin-top:2px;"></span>
       </div>
       <div class="form-field">
-        <label id="labelPhone" for="phone">連絡電話</label>
-        <input type="tel" id="phone" required />
+        <label id="labelPhone" for="phone"></label>
+        <input type="tel" id="phone" required="">
       </div>
       <div class="form-field">
-        <label id="labelEmgContact" for="emergency_contact">緊急聯絡人</label>
-        <input type="text" id="emergency_contact" required />
+        <label id="labelEmgContact" for="emergency_contact"></label>
+        <input type="text" id="emergency_contact" required="">
       </div>
       <div class="form-field">
-        <label id="labelEmgRelation" for="emergency_relation">緊急聯絡人關係</label>
-        <input type="text" id="emergency_relation" required />
+        <label id="labelEmgRelation" for="emergency_relation"></label>
+        <input type="text" id="emergency_relation" required="">
       </div>
       <div class="form-field">
-        <label id="labelEmgPhone" for="emergency_phone">緊急聯絡人電話</label>
-        <input type="tel" id="emergency_phone" required />
+        <label id="labelEmgPhone" for="emergency_phone"></label>
+        <input type="tel" id="emergency_phone" required="">
       </div>
       <div class="nav-btns">
-        <button type="button" id="to-step-2b">上一頁</button>
-        <button type="button" id="to-step-4">下一頁</button>
+        <button type="button" id="to-step-2b"></button>
+        <button type="button" id="to-step-4"></button>
       </div>
     </div>
     <!-- Step 4 -->
     <div id="step-4" style="display:none">
-      <h2 class="page-title" id="pageTitle4">電子簽名確認</h2>
+      <h2 class="page-title" id="pageTitle4"></h2>
       <div class="canvas-block">
-        <label id="labelSign1">參與者簽名（必填）</label>
-        <canvas id="signature1" class="sign-canvas"></canvas>
-        <button type="button" class="clear-btn" id="clear1">清除簽名</button>
+        <label id="labelSign1"></label>
+        <canvas id="signature1" class="sign-canvas" width="0" height="0"></canvas>
+        <button type="button" class="clear-btn" id="clear1"></button>
       </div>
       <div class="canvas-block">
-        <label id="labelSign2">家長／監護人簽名（如未滿18歲必填）</label>
-        <canvas id="signature2" class="sign-canvas"></canvas>
-        <button type="button" class="clear-btn" id="clear2">清除簽名</button>
+        <label id="labelSign2"></label>
+        <canvas id="signature2" class="sign-canvas" width="0" height="0"></canvas>
+        <button type="button" class="clear-btn" id="clear2"></button>
       </div>
       <div class="nav-btns">
-        <button type="button" id="to-step-3b">上一頁</button>
+        <button type="button" id="to-step-3b"></button>
       </div>
-      <button type="submit" class="submit-btn" id="submitBtn">送出</button>
+      <button type="submit" class="submit-btn" id="submitBtn"></button>
     </div>
     <!-- Step 5 -->
     <div id="final-page" style="display:none">
       <div style="font-size:2.5em; margin-top:1.2em; color:#2064bb;">✅</div>
-      <div style="font-size:1.3em; margin:1em 0 0.2em 0; color:#2064bb;" id="successTitle"><b>已成功送出！</b></div>
-      <div style="font-size:1.06em; color:#232629;" id="successMsg">感謝您填寫同意書，<br />祝您攀登愉快、平安順利！</div>
-      <button class="submit-btn" id="more-btn" type="button" style="width:auto;">提交更多資料</button>
+      <div style="font-size:1.3em; margin:1em 0 0.2em 0; color:#2064bb;" id="successTitle"></div>
+      <div style="font-size:1.06em; color:#232629;" id="successMsg"></div>
+      <button class="submit-btn" id="more-btn" type="button" style="width:auto;"></button>
     </div>
   </form>
 </div>
-
 <script>
 const LANGDATA = {
   siteTitle: {
@@ -356,6 +342,11 @@ const LANGDATA = {
   genderM: { 'zh-TW': "男", en: "Male", ja: "男性" },
   genderF: { 'zh-TW': "女", en: "Female", ja: "女性" },
   labelDob: { 'zh-TW': "出生年月日", en: "Date of Birth", ja: "生年月日" },
+  dobFormatTip: {
+    'zh-TW': '格式：年-月-日（如 2015-08-25）',
+    en: 'Format: YYYY-MM-DD (e.g. 2015-08-25)',
+    ja: '形式：YYYY-MM-DD（例：2015-08-25）'
+  },
   labelPhone: { 'zh-TW': "連絡電話", en: "Phone Number", ja: "連絡先電話番号" },
   labelEmgContact: { 'zh-TW': "緊急聯絡人", en: "Emergency Contact", ja: "緊急連絡先" },
   labelEmgRelation: { 'zh-TW': "緊急聯絡人關係", en: "Relationship to Emergency Contact", ja: "緊急連絡先との関係" },
@@ -378,217 +369,286 @@ const LANGDATA = {
     en: "Thank you for completing the waiver. <br>Have a safe and enjoyable climb!",
     ja: "同意書のご記入ありがとうございます。<br>安全で楽しいクライミングを！"
   },
-  moreBtn: { 'zh-TW': "提交更多資料", en: "Submit Another", ja: "追加で記入する" },
-  dobFormatTip: {
-    'zh-TW': '格式：年-月-日（如 2015-08-25）',
-    en: 'Format: YYYY-MM-DD (e.g. 2015-08-25)',
-    ja: '形式：YYYY-MM-DD（例：2015-08-25）'
-  }
+  moreBtn: { 'zh-TW': "提交更多資料", en: "Submit Another", ja: "追加で記入する" }
 };
 
-let currentLang = 'zh-TW';
-let signaturePad1, signaturePad2;
+// ========== 以下是完整JS ===============
 
-function resizeCanvas(canvas) {
-  let ratio = Math.max(window.devicePixelRatio || 1, 1);
-  canvas.width = canvas.offsetWidth * ratio;
-  canvas.height = canvas.offsetHeight * ratio;
-  canvas.getContext("2d").scale(ratio, ratio);
-}
+// ===================== 保證條款頁正確產生 PDF 的修正版 JS =====================
 
-function reinitSignaturePads() {
-  let canvas1 = document.getElementById('signature1');
-  let canvas2 = document.getElementById('signature2');
-  resizeCanvas(canvas1);
-  resizeCanvas(canvas2);
-  signaturePad1 = new SignaturePad(canvas1, { backgroundColor: "#fff" });
-  signaturePad2 = new SignaturePad(canvas2, { backgroundColor: "#fff" });
-  document.getElementById("clear1").onclick = () => signaturePad1.clear();
-  document.getElementById("clear2").onclick = () => signaturePad2.clear();
-  // 禁止選取與拖曳影響簽名體驗
-  canvas1.style.userSelect = "none";
-  canvas2.style.userSelect = "none";
-  canvas1.onselectstart = canvas2.onselectstart = () => false;
-  canvas1.onmousedown = canvas2.onmousedown = () => false;
-}
+// ---- 放在 LANGDATA 之後 ----
 
-function showStep(step) {
-  for (let i = 1; i <= 5; i++) {
-    const el = document.getElementById(`step-${i}`);
-    if (el) el.style.display = i === step ? "block" : "none";
+window.onload = function () {
+  let currentLang = 'zh-TW';
+  let signaturePad1, signaturePad2;
+  let lastStep = 1; // 記錄目前頁面
+
+  function resizeCanvas(canvas) {
+    let ratio = Math.max(window.devicePixelRatio || 1, 1);
+    canvas.width = canvas.offsetWidth * ratio;
+    canvas.height = canvas.offsetHeight * ratio;
+    canvas.getContext("2d").scale(ratio, ratio);
   }
-  // 最後頁特殊處理
-  document.getElementById("final-page").style.display = step === 5 ? "block" : "none";
-  // 語言切換器只在第一頁顯示
-  document.getElementById("langSwitcherRow").style.display = step === 1 ? "flex" : "none";
+  function reinitSignaturePads() {
+    let canvas1 = document.getElementById('signature1');
+    let canvas2 = document.getElementById('signature2');
+    resizeCanvas(canvas1);
+    resizeCanvas(canvas2);
+    signaturePad1 = new SignaturePad(canvas1, { backgroundColor: "#fff" });
+    signaturePad2 = new SignaturePad(canvas2, { backgroundColor: "#fff" });
+    document.getElementById("clear1").onclick = () => signaturePad1.clear();
+    document.getElementById("clear2").onclick = () => signaturePad2.clear();
+    canvas1.style.userSelect = "none";
+    canvas2.style.userSelect = "none";
+    canvas1.onselectstart = canvas2.onselectstart = () => false;
+    canvas1.onmousedown = canvas2.onmousedown = () => false;
+  }
+  function showStep(step) {
+    for (let i = 1; i <= 5; i++) {
+      const el = document.getElementById(`step-${i}`);
+      if (el) el.style.display = i === step ? "block" : "none";
+    }
+    document.getElementById("final-page").style.display = step === 5 ? "block" : "none";
+    document.getElementById("langSwitcherRow").style.display = step === 1 ? "flex" : "none";
+    window.scrollTo({ top: 0, behavior: "auto" });
+    if (step === 4) reinitSignaturePads();
+    lastStep = step;
+  }
+  function setLang(lang) {
+    currentLang = lang;
+    document.getElementById("siteTitle").innerText = LANGDATA.siteTitle[lang];
+    document.getElementById("pageTitle1").innerText = LANGDATA.pageTitle1[lang];
+    document.getElementById("pageTitle2").innerText = LANGDATA.pageTitle2[lang];
+    document.getElementById("pageTitle3").innerText = LANGDATA.pageTitle3[lang];
+    document.getElementById("pageTitle4").innerText = LANGDATA.pageTitle4[lang];
+    document.getElementById("terms1").innerHTML = LANGDATA.terms1[lang];
+    document.getElementById("terms2").innerHTML = LANGDATA.terms2[lang];
+    document.getElementById("agree1text").innerText = LANGDATA.agree1text[lang];
+    document.getElementById("agree2text").innerText = LANGDATA.agree2text[lang];
+    document.getElementById("labelName").innerText = LANGDATA.labelName[lang];
+    document.getElementById("labelIdnumber").innerText = LANGDATA.labelIdnumber[lang];
+    document.getElementById("labelGender").innerText = LANGDATA.labelGender[lang];
+    document.getElementById("genderMText").innerText = LANGDATA.genderM[lang];
+    document.getElementById("genderFText").innerText = LANGDATA.genderF[lang];
+    document.getElementById("labelDob").innerText = LANGDATA.labelDob[lang];
+    document.getElementById("dobFormatTip").innerText = LANGDATA.dobFormatTip[lang];
+    document.getElementById("labelPhone").innerText = LANGDATA.labelPhone[lang];
+    document.getElementById("labelEmgContact").innerText = LANGDATA.labelEmgContact[lang];
+    document.getElementById("labelEmgRelation").innerText = LANGDATA.labelEmgRelation[lang];
+    document.getElementById("labelEmgPhone").innerText = LANGDATA.labelEmgPhone[lang];
+    document.getElementById("labelSign1").innerText = LANGDATA.labelSign1[lang];
+    document.getElementById("labelSign2").innerText = LANGDATA.labelSign2[lang];
+    document.getElementById("clear1").innerText = LANGDATA.clearSign[lang];
+    document.getElementById("clear2").innerText = LANGDATA.clearSign[lang];
+    document.getElementById("submitBtn").innerText = LANGDATA.submitBtn[lang];
+    document.getElementById("to-step-1").innerText = LANGDATA.prevBtn[lang];
+    document.getElementById("to-step-2b").innerText = LANGDATA.prevBtn[lang];
+    document.getElementById("to-step-3b").innerText = LANGDATA.prevBtn[lang];
+    document.getElementById("to-step-2").innerText = LANGDATA.nextBtn[lang];
+    document.getElementById("to-step-3").innerText = LANGDATA.nextBtn[lang];
+    document.getElementById("to-step-4").innerText = LANGDATA.nextBtn[lang];
+    document.getElementById("successTitle").innerText = LANGDATA.successTitle[lang];
+    document.getElementById("successMsg").innerHTML = LANGDATA.successMsg[lang];
+    document.getElementById("more-btn").innerText = LANGDATA.moreBtn[lang];
+  }
 
-  // 滾動回頂端
-  window.scrollTo({ top: 0, behavior: "auto" });
+  // --- 強制正確取得 canvas ---
+  async function getVisibleCanvas(id) {
+    const el = document.getElementById(id);
+    const prevDisplay = el.style.display;
+    const prevPosition = el.style.position;
+    const prevLeft = el.style.left;
+    const prevVisibility = el.style.visibility;
+    el.style.display = 'block';
+    el.style.position = 'absolute';
+    el.style.left = '-9999px';
+    el.style.visibility = 'visible';
+    await new Promise(r => setTimeout(r, 350));
+    const canvas = await html2canvas(el, { scale: 2 });
+    el.style.display = prevDisplay;
+    el.style.position = prevPosition;
+    el.style.left = prevLeft;
+    el.style.visibility = prevVisibility;
+    return canvas;
+  }
 
-  // 進入簽名頁才重置簽名板
-  if (step === 4) reinitSignaturePads();
-}
-
-function setLang(lang) {
-  currentLang = lang;
-
-  // 標題
-  document.getElementById("siteTitle").innerText = LANGDATA.siteTitle[lang];
-  document.getElementById("pageTitle1").innerText = LANGDATA.pageTitle1[lang];
-  document.getElementById("pageTitle2").innerText = LANGDATA.pageTitle2[lang];
-  document.getElementById("pageTitle3").innerText = LANGDATA.pageTitle3[lang];
-  document.getElementById("pageTitle4").innerText = LANGDATA.pageTitle4[lang];
-
-  // 條款
-  document.getElementById("terms1").innerHTML = LANGDATA.terms1[lang];
-  document.getElementById("terms2").innerHTML = LANGDATA.terms2[lang];
-
-  // 同意文字
-  document.getElementById("agree1text").innerText = LANGDATA.agree1text[lang];
-  document.getElementById("agree2text").innerText = LANGDATA.agree2text[lang];
-
-  // 表單欄位
-  document.getElementById("labelName").innerText = LANGDATA.labelName[lang];
-  document.getElementById("labelIdnumber").innerText = LANGDATA.labelIdnumber[lang];
-  document.getElementById("labelGender").innerText = LANGDATA.labelGender[lang];
-  document.getElementById("genderMText").innerText = LANGDATA.genderM[lang];
-  document.getElementById("genderFText").innerText = LANGDATA.genderF[lang];
-  document.getElementById("labelDob").innerText = LANGDATA.labelDob[lang];
-  document.getElementById("dobFormatTip").innerText = LANGDATA.dobFormatTip[lang];
-  document.getElementById("labelPhone").innerText = LANGDATA.labelPhone[lang];
-  document.getElementById("labelEmgContact").innerText = LANGDATA.labelEmgContact[lang];
-  document.getElementById("labelEmgRelation").innerText = LANGDATA.labelEmgRelation[lang];
-  document.getElementById("labelEmgPhone").innerText = LANGDATA.labelEmgPhone[lang];
-  document.getElementById("labelSign1").innerText = LANGDATA.labelSign1[lang];
-  document.getElementById("labelSign2").innerText = LANGDATA.labelSign2[lang];
-  document.getElementById("clear1").innerText = LANGDATA.clearSign[lang];
-  document.getElementById("clear2").innerText = LANGDATA.clearSign[lang];
-  document.getElementById("submitBtn").innerText = LANGDATA.submitBtn[lang];
-
-  // 按鈕文字
-  document.getElementById("to-step-1").innerText = LANGDATA.prevBtn[lang];
-  document.getElementById("to-step-2b").innerText = LANGDATA.prevBtn[lang];
-  document.getElementById("to-step-3b").innerText = LANGDATA.prevBtn[lang];
-  document.getElementById("to-step-2").innerText = LANGDATA.nextBtn[lang];
-  document.getElementById("to-step-3").innerText = LANGDATA.nextBtn[lang];
-  document.getElementById("to-step-4").innerText = LANGDATA.nextBtn[lang];
-
-  document.getElementById("successTitle").innerText = LANGDATA.successTitle[lang];
-  document.getElementById("successMsg").innerHTML = LANGDATA.successMsg[lang];
-  document.getElementById("more-btn").innerText = LANGDATA.moreBtn[lang];
-}
-
-window.onload = () => {
   setLang('zh-TW');
   showStep(1);
-
-  // 初始化簽名板
   reinitSignaturePads();
+  window.addEventListener('resize', () => { if (signaturePad1 && signaturePad2) reinitSignaturePads(); });
 
-  window.addEventListener('resize', () => {
-    if (signaturePad1 && signaturePad2) reinitSignaturePads();
-  });
-};
-
-// 按鈕事件綁定
-document.getElementById("to-step-2").onclick = () => {
-  if (!document.getElementById("agree1").checked) return alert(LANGDATA.errFill[currentLang]);
-  showStep(2);
-};
-document.getElementById("to-step-1").onclick = () => showStep(1);
-document.getElementById("to-step-3").onclick = () => {
-  if (!document.getElementById("agree2").checked) return alert(LANGDATA.errFill[currentLang]);
-  showStep(3);
-};
-document.getElementById("to-step-2b").onclick = () => showStep(2);
-document.getElementById("to-step-4").onclick = () => {
-  // 簡單檢查必要欄位是否填寫
-  const name = document.getElementById("name").value.trim();
-  const idnumber = document.getElementById("idnumber").value.trim();
-  const gender = document.querySelector('input[name="gender"]:checked');
-  const dob = document.getElementById("dob").value;
-  const phone = document.getElementById("phone").value.trim();
-  const emergency_contact = document.getElementById("emergency_contact").value.trim();
-  const emergency_relation = document.getElementById("emergency_relation").value.trim();
-  const emergency_phone = document.getElementById("emergency_phone").value.trim();
-
-  if (!name || !idnumber || !gender || !dob || !phone || !emergency_contact || !emergency_relation || !emergency_phone) {
-    alert(LANGDATA.errFill[currentLang]);
-    return;
-  }
-  showStep(4);
-};
-document.getElementById("to-step-3b").onclick = () => showStep(3);
-document.getElementById("more-btn").onclick = () => window.location.reload();
-
-document.getElementById("langSwitcher").addEventListener('change', e => {
-  setLang(e.target.value);
-  showStep(1);
-});
-
-document.getElementById("waiverForm").onsubmit = async function (e) {
-  e.preventDefault();
-
-  const submitBtn = document.getElementById("submitBtn");
-  if (submitBtn.disabled) return false; // 如果已經被 disable，不再送出
-  submitBtn.disabled = true;
-  submitBtn.textContent = "送出中...";
-
-  if (signaturePad1.isEmpty()) {
-    alert(LANGDATA.errSign1[currentLang]);
-    return false;
-  }
-  const dob = document.getElementById("dob").value;
-  let age = 0;
-  if (dob) {
-    const birth = new Date(dob);
-    const today = new Date();
-    age = today.getFullYear() - birth.getFullYear();
-    const m = today.getMonth() - birth.getMonth();
-    if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
-  }
-
-  if (age < 18 && signaturePad2.isEmpty()) {
-    alert(LANGDATA.errSign2[currentLang]);
-    return false;
-  }
-
-  // 使用 FormData 傳送資料
-  const formData = new FormData();
-  formData.append("lang", currentLang);
-  formData.append("姓名", document.getElementById("name").value.trim());
-  formData.append("身分證字號", document.getElementById("idnumber").value.trim());
-  formData.append("性別", document.querySelector('input[name="gender"]:checked')?.value || '');
-  formData.append("出生年月日", dob);
-  formData.append("連絡電話", document.getElementById("phone").value.trim());
-  formData.append("緊急聯絡人", document.getElementById("emergency_contact").value.trim());
-  formData.append("緊急聯絡人關係", document.getElementById("emergency_relation").value.trim());
-  formData.append("緊急聯絡人電話", document.getElementById("emergency_phone").value.trim());
-  formData.append("參與者簽名", signaturePad1.toDataURL());
-  formData.append("家長監護人簽名", signaturePad2.toDataURL());
-  formData.append("同意條款1", document.getElementById("agree1").checked ? "Y" : "N");
-  formData.append("同意條款2", document.getElementById("agree2").checked ? "Y" : "N");
-
-  const url = 'https://script.google.com/macros/s/AKfycbzWIAAoBebTYnVkiNb9tD_f3EfK60f8x5EitfIxGAkPD1pXaXKhJvKu3WppweDn4jRl/exec';
-
-  try {
-    const res = await fetch(url, {
-      method: "POST",
-      body: formData
-    });
-    const txt = await res.text();
-    if (res.ok && (txt.trim() === "OK" || txt.toLowerCase().includes("success"))) {
-      showStep(5);
-      return false;
-    } else {
-      alert(LANGDATA.errFail[currentLang] + "\n" + txt);
-      return false;
+  document.getElementById("to-step-2").onclick = () => {
+    if (!document.getElementById("agree1").checked) return alert(LANGDATA.errFill[currentLang]);
+    showStep(2);
+  };
+  document.getElementById("to-step-1").onclick = () => showStep(1);
+  document.getElementById("to-step-3").onclick = () => {
+    if (!document.getElementById("agree2").checked) return alert(LANGDATA.errFill[currentLang]);
+    showStep(3);
+  };
+  document.getElementById("to-step-2b").onclick = () => showStep(2);
+  document.getElementById("to-step-4").onclick = () => {
+    const name = document.getElementById("name").value.trim();
+    const idnumber = document.getElementById("idnumber").value.trim();
+    const gender = document.querySelector('input[name="gender"]:checked');
+    const dob = document.getElementById("dob").value;
+    const phone = document.getElementById("phone").value.trim();
+    const emergency_contact = document.getElementById("emergency_contact").value.trim();
+    const emergency_relation = document.getElementById("emergency_relation").value.trim();
+    const emergency_phone = document.getElementById("emergency_phone").value.trim();
+    if (!name || !idnumber || !gender || !dob || !phone || !emergency_contact || !emergency_relation || !emergency_phone) {
+      alert(LANGDATA.errFill[currentLang]);
+      return;
     }
-  } catch (err) {
-    alert(LANGDATA.errError[currentLang]);
-    return false;
-  }
+    showStep(4);
+  };
+  document.getElementById("to-step-3b").onclick = () => showStep(3);
+  document.getElementById("more-btn").onclick = () => window.location.reload();
+  document.getElementById("langSwitcher").addEventListener('change', e => {
+    setLang(e.target.value); showStep(1);
+  });
+
+  document.getElementById("waiverForm").onsubmit = async function (e) {
+    e.preventDefault();
+    const submitBtn = document.getElementById("submitBtn");
+    if (submitBtn.disabled) return false;
+    submitBtn.disabled = true;
+    submitBtn.textContent = "送出中...";
+    try {
+      if (signaturePad1.isEmpty()) {
+        alert(LANGDATA.errSign1[currentLang]);
+        submitBtn.disabled = false;
+        submitBtn.textContent = LANGDATA.submitBtn[currentLang];
+        return false;
+      }
+      const dob = document.getElementById("dob").value;
+      let age = 0;
+      if (dob) {
+        const birth = new Date(dob);
+        const today = new Date();
+        age = today.getFullYear() - birth.getFullYear();
+        const m = today.getMonth() - birth.getMonth();
+        if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+      }
+      if (age < 18 && signaturePad2.isEmpty()) {
+        alert(LANGDATA.errSign2[currentLang]);
+        submitBtn.disabled = false;
+        submitBtn.textContent = LANGDATA.submitBtn[currentLang];
+        return false;
+      }
+
+      // ----- 【修正重點】切換到 step-1 保證條款顯示 -----
+      const prevStep = lastStep;
+      showStep(1); // 顯示 step-1 條款頁
+      await new Promise(r => setTimeout(r, 450));
+      // -------
+
+      // 產生 PDF 圖片
+      const terms1Canvas = await getVisibleCanvas('terms1');
+      const imgData1 = terms1Canvas.toDataURL('image/png');
+      // 切換 step-2 保證有內容
+      showStep(2); await new Promise(r => setTimeout(r, 450));
+      const terms2Canvas = await getVisibleCanvas('terms2');
+      // 切回原本頁面避免畫面閃爍
+      showStep(prevStep);
+
+      // 產生資料區塊圖片（step-3）
+      showStep(3); await new Promise(r => setTimeout(r, 450));
+      const dataSectionCanvas = await getVisibleCanvas('step-3');
+      showStep(prevStep); // 還原
+
+      const sig1DataUrl = signaturePad1.toDataURL('image/png');
+      const sig2DataUrl = signaturePad2.isEmpty() ? null : signaturePad2.toDataURL('image/png');
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('p', 'pt', 'a4');
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      function drawWatermark() {
+        const dateStr = new Date().toLocaleDateString();
+        pdf.setFontSize(9);
+        pdf.setTextColor(150);
+        pdf.text(`送出日期: ${dateStr}`, pageWidth - 100, pageHeight - 30);
+      }
+      function validImgData(imgData) {
+        return imgData.startsWith('data:image/png') || imgData.startsWith('data:image/jpeg');
+      }
+      // 條款1
+      if (!validImgData(imgData1)) {
+        alert("條款1圖片格式錯誤，無法加入 PDF。");
+        throw new Error("條款1圖片格式錯誤");
+      }
+      const imgProps1 = pdf.getImageProperties(imgData1);
+      const pdfWidth = pageWidth - 40;
+      const pdfHeight = (imgProps1.height * pdfWidth) / imgProps1.width;
+      pdf.addImage(imgData1, 'PNG', 20, 20, pdfWidth, pdfHeight);
+      drawWatermark();
+      // 條款2
+      let imgData2 = terms2Canvas.toDataURL('image/png');
+      if (!validImgData(imgData2)) {
+        alert("條款2圖片格式錯誤，無法加入 PDF。");
+        throw new Error("條款2圖片格式錯誤");
+      }
+      pdf.addPage();
+      pdf.addImage(imgData2, 'PNG', 20, 20, pdfWidth, pdfHeight);
+      drawWatermark();
+      // 資料頁
+      let imgData3 = dataSectionCanvas.toDataURL('image/png');
+      if (!validImgData(imgData3)) {
+        alert("資料頁圖片格式錯誤，無法加入 PDF。");
+        throw new Error("資料頁圖片格式錯誤");
+      }
+      pdf.addPage();
+      pdf.addImage(imgData3, 'PNG', 20, 20, pdfWidth, pdfHeight);
+      // 簽名
+      if (!validImgData(sig1DataUrl)) {
+        alert("參與者簽名圖片格式錯誤，無法加入 PDF。");
+        throw new Error("參與者簽名圖片格式錯誤");
+      }
+      pdf.addImage(sig1DataUrl, 'PNG', 40, pageHeight - 140, 180, 80);
+      pdf.text(LANGDATA.labelSign1[currentLang], 40, pageHeight - 50);
+      if (sig2DataUrl) {
+        if (!validImgData(sig2DataUrl)) {
+          alert("家長簽名圖片格式錯誤，無法加入 PDF。");
+          throw new Error("家長簽名圖片格式錯誤");
+        }
+        pdf.addImage(sig2DataUrl, 'PNG', pageWidth - 220, pageHeight - 140, 180, 80);
+        pdf.text(LANGDATA.labelSign2[currentLang], pageWidth - 220, pageHeight - 50);
+      }
+      drawWatermark();
+      const pdfBase64 = pdf.output('datauristring').split(',')[1];
+      const formData = new FormData();
+      formData.append("lang", currentLang);
+      formData.append("姓名", document.getElementById("name").value.trim());
+      formData.append("身分證字號", document.getElementById("idnumber").value.trim());
+      formData.append("性別", document.querySelector('input[name="gender"]:checked')?.value || '');
+      formData.append("出生年月日", dob);
+      formData.append("連絡電話", document.getElementById("phone").value.trim());
+      formData.append("緊急聯絡人", document.getElementById("emergency_contact").value.trim());
+      formData.append("緊急聯絡人關係", document.getElementById("emergency_relation").value.trim());
+      formData.append("緊急聯絡人電話", document.getElementById("emergency_phone").value.trim());
+      formData.append("同意條款1", document.getElementById("agree1").checked ? "Y" : "N");
+      formData.append("同意條款2", document.getElementById("agree2").checked ? "Y" : "N");
+      formData.append("pdfBase64", pdfBase64);
+
+      // 請改成你的 Apps Script 網址
+      const url = 'https://script.google.com/macros/s/AKfycbxhIZYrWkCyiYccYOTwKN3l-C-74kVVMrlD7kj4NAvaKNw3D6Jjd64wFIDyxLG3pssB/exec';
+      const res = await fetch(url, { method: "POST", body: formData });
+      const txt = await res.text();
+      if (res.ok && (txt.trim() === "OK" || txt.toLowerCase().includes("success"))) {
+        showStep(5);
+      } else {
+        alert(LANGDATA.errFail[currentLang] + "\n" + txt);
+      }
+    } catch (error) {
+      alert(LANGDATA.errError[currentLang]);
+      console.error(error);
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = LANGDATA.submitBtn[currentLang];
+    }
+  };
 };
+
 </script>
 </body>
 </html>

@@ -631,7 +631,7 @@ window.onload = function () {
       formData.append("pdfBase64", pdfBase64);
 
       // 請改成你的 Apps Script 網址
-      const url = 'https://script.google.com/macros/s/AKfycbxhIZYrWkCyiYccYOTwKN3l-C-74kVVMrlD7kj4NAvaKNw3D6Jjd64wFIDyxLG3pssB/exec';
+      const url = 'https://script.google.com/macros/s/AKfycbw6eVng2rWmDBQqp-jJitkTog20PA3qOLAl39RwtBepKy_NcJu_eb290w2qG9-itqwM/exec';
       const res = await fetch(url, { method: "POST", body: formData });
       const txt = await res.text();
       if (res.ok && (txt.trim() === "OK" || txt.toLowerCase().includes("success"))) {

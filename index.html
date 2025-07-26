@@ -641,7 +641,7 @@ window.onload = function () {
       formData.append("imgBase64", imgBase64); // 改這裡
 
       // 請改成你的 Apps Script 網址
-      const url = 'https://script.google.com/macros/s/AKfycbxmCAWjYKZklmnrN0afGTrmqpDkuDonBjVUW9KKV5zECi9wbl6X-Y2goI_d79lkAwS2/exec';
+      const url = 'https://script.google.com/macros/s/AKfycbz1aQeYA_b2i3o2N9mIsOH3Br6b-YTif4BxrlOoU8iWP6hf5Zvvyiylpt0lwgN6UZC_/exec';
       const res = await fetch(url, { method: "POST", body: formData });
       const txt = await res.text();
       if (res.ok && (txt.trim() === "OK" || txt.toLowerCase().includes("success"))) {

@@ -381,7 +381,7 @@ const LANGDATA = {
 window.onload = function () {
   let currentLang = 'zh-TW';
   let signaturePad1, signaturePad2;
-  let lastStep = 1; // 記錄目前頁面
+  let lastStep = 1;
 
   function resizeCanvas(canvas) {
     let ratio = Math.max(window.devicePixelRatio || 1, 1);
@@ -464,7 +464,7 @@ window.onload = function () {
     el.style.left = '-9999px';
     el.style.visibility = 'visible';
     await new Promise(r => setTimeout(r, 350));
-    const canvas = await html2canvas(el, { scale: 2 });
+    const canvas = await html2canvas(el, { scale: 2, useCORS: true });
     el.style.display = prevDisplay;
     el.style.position = prevPosition;
     el.style.left = prevLeft;
@@ -508,6 +508,40 @@ window.onload = function () {
     setLang(e.target.value); showStep(1);
   });
 
+  // 合併多個canvas為一張超長圖
+  async function combineCanvasesWithText(sections) {
+    let totalHeight = 0;
+    let maxWidth = 0;
+    for (const s of sections) {
+      totalHeight += s.canvas.height + (s.watermark ? 40 : 0) + (s.identity ? 40 : 0);
+      maxWidth = Math.max(maxWidth, s.canvas.width);
+    }
+    let outCanvas = document.createElement("canvas");
+    outCanvas.width = maxWidth;
+    outCanvas.height = totalHeight;
+    let ctx = outCanvas.getContext("2d");
+    let offsetY = 0;
+    for (const s of sections) {
+      ctx.drawImage(s.canvas, 0, offsetY);
+      // 水印（送出日期）
+      if (s.watermark) {
+        ctx.font = "bold 24px Noto Sans TC, Microsoft JhengHei, sans-serif";
+        ctx.fillStyle = "rgba(100,110,160,0.42)";
+        ctx.textAlign = "right";
+        ctx.fillText(`送出日期: ${s.dateStr}`, s.canvas.width - 32, offsetY + s.canvas.height + 32);
+      }
+      // 身份註記
+      if (s.identity) {
+        ctx.font = "bold 28px Noto Sans TC, Microsoft JhengHei, sans-serif";
+        ctx.fillStyle = "#2264bb";
+        ctx.textAlign = "left";
+        ctx.fillText(s.identity, 32, offsetY + s.canvas.height + 36);
+      }
+      offsetY += s.canvas.height + (s.watermark ? 40 : 0) + (s.identity ? 40 : 0);
+    }
+    return outCanvas;
+  }
+
   document.getElementById("waiverForm").onsubmit = async function (e) {
     e.preventDefault();
     const submitBtn = document.getElementById("submitBtn");
@@ -537,85 +571,61 @@ window.onload = function () {
         return false;
       }
 
-      // ----- 【修正重點】切換到 step-1 保證條款顯示 -----
+      // 取出所有要合成的區塊
       const prevStep = lastStep;
-      showStep(1); // 顯示 step-1 條款頁
-      await new Promise(r => setTimeout(r, 450));
-      // -------
-
-      // 產生 PDF 圖片
+      // 條款1
+      showStep(1); await new Promise(r => setTimeout(r, 350));
       const terms1Canvas = await getVisibleCanvas('terms1');
-      const imgData1 = terms1Canvas.toDataURL('image/png');
-      // 切換 step-2 保證有內容
-      showStep(2); await new Promise(r => setTimeout(r, 450));
+      // 條款2
+      showStep(2); await new Promise(r => setTimeout(r, 350));
       const terms2Canvas = await getVisibleCanvas('terms2');
-      // 切回原本頁面避免畫面閃爍
-      showStep(prevStep);
-
-      // 產生資料區塊圖片（step-3）
-      showStep(3); await new Promise(r => setTimeout(r, 450));
-      const dataSectionCanvas = await getVisibleCanvas('step-3');
-      showStep(prevStep); // 還原
-
+      // 個資頁
+      showStep(3); await new Promise(r => setTimeout(r, 350));
+      const infoCanvas = await getVisibleCanvas('step-3');
+      showStep(4); // 還原
+      // 簽名
       const sig1DataUrl = signaturePad1.toDataURL('image/png');
       const sig2DataUrl = signaturePad2.isEmpty() ? null : signaturePad2.toDataURL('image/png');
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF('p', 'pt', 'a4');
-      const pageWidth = pdf.internal.pageSize.getWidth();
-      const pageHeight = pdf.internal.pageSize.getHeight();
-      function drawWatermark() {
-        const dateStr = new Date().toLocaleDateString();
-        pdf.setFontSize(9);
-        pdf.setTextColor(150);
-        pdf.text(`送出日期: ${dateStr}`, pageWidth - 100, pageHeight - 30);
-      }
-      function validImgData(imgData) {
-        return imgData.startsWith('data:image/png') || imgData.startsWith('data:image/jpeg');
-      }
-      // 條款1
-      if (!validImgData(imgData1)) {
-        alert("條款1圖片格式錯誤，無法加入 PDF。");
-        throw new Error("條款1圖片格式錯誤");
-      }
-      const imgProps1 = pdf.getImageProperties(imgData1);
-      const pdfWidth = pageWidth - 40;
-      const pdfHeight = (imgProps1.height * pdfWidth) / imgProps1.width;
-      pdf.addImage(imgData1, 'PNG', 20, 20, pdfWidth, pdfHeight);
-      drawWatermark();
-      // 條款2
-      let imgData2 = terms2Canvas.toDataURL('image/png');
-      if (!validImgData(imgData2)) {
-        alert("條款2圖片格式錯誤，無法加入 PDF。");
-        throw new Error("條款2圖片格式錯誤");
-      }
-      pdf.addPage();
-      pdf.addImage(imgData2, 'PNG', 20, 20, pdfWidth, pdfHeight);
-      drawWatermark();
-      // 資料頁
-      let imgData3 = dataSectionCanvas.toDataURL('image/png');
-      if (!validImgData(imgData3)) {
-        alert("資料頁圖片格式錯誤，無法加入 PDF。");
-        throw new Error("資料頁圖片格式錯誤");
-      }
-      pdf.addPage();
-      pdf.addImage(imgData3, 'PNG', 20, 20, pdfWidth, pdfHeight);
-      // 簽名
-      if (!validImgData(sig1DataUrl)) {
-        alert("參與者簽名圖片格式錯誤，無法加入 PDF。");
-        throw new Error("參與者簽名圖片格式錯誤");
-      }
-      pdf.addImage(sig1DataUrl, 'PNG', 40, pageHeight - 140, 180, 80);
-      pdf.text(LANGDATA.labelSign1[currentLang], 40, pageHeight - 50);
+      // 參與者簽名圖
+      let sig1Canvas = document.createElement('canvas');
+      sig1Canvas.width = 800; sig1Canvas.height = 160;
+      let sig1ctx = sig1Canvas.getContext('2d');
+      let sig1img = new window.Image();
+      sig1img.src = sig1DataUrl;
+      await new Promise(res => sig1img.onload = res);
+      sig1ctx.fillStyle = "#fff"; sig1ctx.fillRect(0,0,800,160);
+      sig1ctx.drawImage(sig1img, 20, 15, 760, 110);
+      // 家長簽名圖
+      let sig2Canvas = null;
       if (sig2DataUrl) {
-        if (!validImgData(sig2DataUrl)) {
-          alert("家長簽名圖片格式錯誤，無法加入 PDF。");
-          throw new Error("家長簽名圖片格式錯誤");
-        }
-        pdf.addImage(sig2DataUrl, 'PNG', pageWidth - 220, pageHeight - 140, 180, 80);
-        pdf.text(LANGDATA.labelSign2[currentLang], pageWidth - 220, pageHeight - 50);
+        sig2Canvas = document.createElement('canvas');
+        sig2Canvas.width = 800; sig2Canvas.height = 160;
+        let sig2ctx = sig2Canvas.getContext('2d');
+        let sig2img = new window.Image();
+        sig2img.src = sig2DataUrl;
+        await new Promise(res => sig2img.onload = res);
+        sig2ctx.fillStyle = "#fff"; sig2ctx.fillRect(0,0,800,160);
+        sig2ctx.drawImage(sig2img, 20, 15, 760, 110);
       }
-      drawWatermark();
-      const pdfBase64 = pdf.output('datauristring').split(',')[1];
+      showStep(prevStep);
+
+      // 送出日期
+      const dateStr = new Date().toLocaleDateString();
+
+      // 各區塊合併順序
+      const combineSections = [
+        { canvas: terms1Canvas, watermark: true, dateStr },
+        { canvas: terms2Canvas, watermark: true, dateStr },
+        { canvas: infoCanvas, watermark: true, dateStr },
+        { canvas: sig1Canvas, watermark: false, identity: LANGDATA.labelSign1[currentLang] }
+      ];
+      if (sig2Canvas) combineSections.push({ canvas: sig2Canvas, watermark: false, identity: LANGDATA.labelSign2[currentLang] });
+
+      // 合成大圖
+      const allInOneCanvas = await combineCanvasesWithText(combineSections);
+      const imgBase64 = allInOneCanvas.toDataURL('image/png').replace(/^data:image\/png;base64,/, '');
+
+      // 組表單資料
       const formData = new FormData();
       formData.append("lang", currentLang);
       formData.append("姓名", document.getElementById("name").value.trim());
@@ -628,7 +638,7 @@ window.onload = function () {
       formData.append("緊急聯絡人電話", document.getElementById("emergency_phone").value.trim());
       formData.append("同意條款1", document.getElementById("agree1").checked ? "Y" : "N");
       formData.append("同意條款2", document.getElementById("agree2").checked ? "Y" : "N");
-      formData.append("pdfBase64", pdfBase64);
+      formData.append("imgBase64", imgBase64); // 改這裡
 
       // 請改成你的 Apps Script 網址
       const url = 'https://script.google.com/macros/s/AKfycbw9ykGS4_yjnDi57wJd0mpHveDtH159Xs7EvYq87iO4-V4E_EttTS7bIhbbdpcLXr9E/exec';

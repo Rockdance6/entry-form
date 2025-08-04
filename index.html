@@ -372,7 +372,7 @@ const LANGDATA = {
   moreBtn: { 'zh-TW': "提交更多資料", en: "Submit Another", ja: "追加で記入する" }
 };
 
-// --- 填表到底圖 function ---
+
 async function fillFormAndSave({ bgImgUrl, formData, signature1Url, signature2Url }) {
   return new Promise((resolve) => {
     const img = new Image();
@@ -396,45 +396,55 @@ async function fillFormAndSave({ bgImgUrl, formData, signature1Url, signature2Ur
 
       // 原始設計用的座標（1240 寬度下）
       const fieldPos = {
-  "姓名": [247, 250],
-  "身分證字號": [326, 332],
-  "性別": [244, 414],
-  "出生年月日": [326, 493],
-  "連絡電話": [297, 572],
-  "緊急聯絡人": [323, 651],
-  "緊急聯絡人關係": [381, 729],
-  "緊急聯絡人電話": [384, 811],
-  "參與者簽名": [194, 1223],
-  "家長／監護人簽名": [191, 1638]
-  };
+        "姓名": [247, 250],
+        "身分證字號": [326, 332],
+        "性別": [244, 414],
+        "出生年月日": [326, 493],
+        "連絡電話": [297, 572],
+        "緊急聯絡人": [323, 651],
+        "緊急聯絡人關係": [381, 729],
+        "緊急聯絡人電話": [384, 811]
+      };
+      // 簽名圖正確位置
+      const signaturePos = {
+        "參與者簽名": [393, 1215],
+        "家長／監護人簽名": [393, 1630]
+      };
+      const signatureSize = [800, 160];
 
-      // 畫上每個欄位文字
+      // 畫字
       for (const key in fieldPos) {
         const [x, y] = fieldPos[key];
         ctx.fillText(formData[key] || '', x * scale, y * scale);
       }
-
-      // 簽名圖也一起縮放處理
+      // 畫簽名
       if (signature1Url) {
         const sig1Img = new Image();
         sig1Img.src = signature1Url;
         await new Promise(res => sig1Img.onload = res);
-        ctx.drawImage(sig1Img, 150 * scale, 560 * scale, 600 * scale, 100 * scale);
+        ctx.drawImage(sig1Img,
+          signaturePos["參與者簽名"][0] * scale,
+          signaturePos["參與者簽名"][1] * scale,
+          signatureSize[0] * scale,
+          signatureSize[1] * scale
+        );
       }
-
       if (signature2Url) {
         const sig2Img = new Image();
         sig2Img.src = signature2Url;
         await new Promise(res => sig2Img.onload = res);
-        ctx.drawImage(sig2Img, 150 * scale, 690 * scale, 600 * scale, 100 * scale);
+        ctx.drawImage(sig2Img,
+          signaturePos["家長／監護人簽名"][0] * scale,
+          signaturePos["家長／監護人簽名"][1] * scale,
+          signatureSize[0] * scale,
+          signatureSize[1] * scale
+        );
       }
-
       // 回傳圖片 Base64
       resolve(canvas.toDataURL("image/png"));
     };
-  });
+  }); // <--- 這裡你漏掉！
 }
-
 
 
 window.onload = function () {

@@ -398,14 +398,14 @@ async function genPageCanvas(bgImgUrl, options = {}) {
       if (options.formData) {
   const scale = img.width / 1240;
   const fieldPos = {
-    "姓名": [164,  126],
-    "身分證字號": [222,  174],
-    "性別": [164,  222],
-    "出生年月日": [222,  270],
-    "連絡電話":  [222,  318],
-    "緊急聯絡人": [222,  366],
-    "緊急聯絡人關係":  [280,  414],
-    "緊急聯絡人電話":  [280,  462],
+    "姓名": [677,777],
+    "身分證字號": [925,  1021],
+    "性別": [681,  1269],
+    "出生年月日": [925,  1513],
+    "連絡電話":  [845,  1757],
+    "緊急聯絡人": [925,2001],
+    "緊急聯絡人關係":  [1089  2249],
+    "緊急聯絡人電話":  [1089,2493],
   };
   ctx.font = `bold ${Math.round(24 * scale)}px 'Noto Sans TC', 'Microsoft JhengHei', sans-serif`;
   ctx.fillStyle = "#1a2533";
@@ -420,7 +420,7 @@ async function genPageCanvas(bgImgUrl, options = {}) {
       // 若有簽名要畫
       if (options.signature1Url) {
         const scale = img.width / 1240;
-        const signaturePos = [90,  555];
+        const signaturePos = [533,  3733];
         const signatureSize =  [1060, 160];
         const sig1Img = new Image();
         sig1Img.src = options.signature1Url;
@@ -434,7 +434,7 @@ async function genPageCanvas(bgImgUrl, options = {}) {
       }
       if (options.signature2Url) {
         const scale = img.width / 1240;
-        const signaturePos = [90,  778];
+        const signaturePos = [533,  5000];
         const signatureSize =  [1060, 160];
         const sig2Img = new Image();
         sig2Img.src = options.signature2Url;

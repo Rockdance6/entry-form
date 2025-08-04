@@ -388,6 +388,7 @@ async function genPageCanvas(bgImgUrl, options = {}) {
     const img = new Image();
     img.src = bgImgUrl;
     img.onload = async function () {
+      console.log('底圖寬高:', img.width, img.height); 
       const canvas = document.createElement('canvas');
       canvas.width = img.width;
       canvas.height = img.height;

@@ -372,11 +372,64 @@ const LANGDATA = {
   moreBtn: { 'zh-TW': "提交更多資料", en: "Submit Another", ja: "追加で記入する" }
 };
 
-// ========== 以下是完整JS ===============
+// --- 填表到底圖 function ---
+async function fillFormAndSave({ bgImgUrl, formData, signature1Url, signature2Url }) {
+  return new Promise((resolve) => {
+    const img = new window.Image();
+    img.src = bgImgUrl;
+    img.onload = async function () {
+      // 建立 canvas
+      const canvas = document.createElement('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      // 畫底圖
+      ctx.drawImage(img, 0, 0);
 
-// ===================== 保證條款頁正確產生 PDF 的修正版 JS =====================
+      // 字型設定
+      ctx.font = "bold 24px 'Noto Sans TC', 'Microsoft JhengHei', sans-serif";
+      ctx.fillStyle = "#1a2533";
+      ctx.textBaseline = "top";
 
-// ---- 放在 LANGDATA 之後 ----
+      // 欄位座標
+      const fieldPos = {
+        姓名: [150, 130],
+        身分證字號: [150, 180],
+        性別: [150, 230],
+        出生年月日: [150, 280],
+        連絡電話: [150, 330],
+        緊急聯絡人: [150, 380],
+        緊急聯絡人關係: [150, 430],
+        緊急聯絡人電話: [150, 480]
+      };
+
+      // 寫資料
+      Object.keys(fieldPos).forEach((key) => {
+        ctx.fillText(formData[key] || '', ...fieldPos[key]);
+      });
+
+      // 簽名處理
+      // 參與者
+      if (signature1Url) {
+        const sig1Img = new window.Image();
+        sig1Img.src = signature1Url;
+        await new Promise(res => sig1Img.onload = res);
+        ctx.drawImage(sig1Img, 150, 560, 600, 100);
+      }
+      // 家長（如果有）
+      if (signature2Url) {
+        const sig2Img = new window.Image();
+        sig2Img.src = signature2Url;
+        await new Promise(res => sig2Img.onload = res);
+        ctx.drawImage(sig2Img, 150, 690, 600, 100);
+      }
+
+      // 完成
+      resolve(canvas.toDataURL("image/png"));
+    };
+  });
+}
+
 
 window.onload = function () {
   let currentLang = 'zh-TW';
@@ -543,121 +596,90 @@ window.onload = function () {
   }
 
   document.getElementById("waiverForm").onsubmit = async function (e) {
-    e.preventDefault();
-    const submitBtn = document.getElementById("submitBtn");
-    if (submitBtn.disabled) return false;
-    submitBtn.disabled = true;
-    submitBtn.textContent = "送出中...";
-    try {
-      if (signaturePad1.isEmpty()) {
-        alert(LANGDATA.errSign1[currentLang]);
-        submitBtn.disabled = false;
-        submitBtn.textContent = LANGDATA.submitBtn[currentLang];
-        return false;
-      }
-      const dob = document.getElementById("dob").value;
-      let age = 0;
-      if (dob) {
-        const birth = new Date(dob);
-        const today = new Date();
-        age = today.getFullYear() - birth.getFullYear();
-        const m = today.getMonth() - birth.getMonth();
-        if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
-      }
-      if (age < 18 && signaturePad2.isEmpty()) {
-        alert(LANGDATA.errSign2[currentLang]);
-        submitBtn.disabled = false;
-        submitBtn.textContent = LANGDATA.submitBtn[currentLang];
-        return false;
-      }
-
-      // 取出所有要合成的區塊
-      const prevStep = lastStep;
-      // 條款1
-      showStep(1); await new Promise(r => setTimeout(r, 350));
-      const terms1Canvas = await getVisibleCanvas('terms1');
-      // 條款2
-      showStep(2); await new Promise(r => setTimeout(r, 350));
-      const terms2Canvas = await getVisibleCanvas('terms2');
-      // 個資頁
-      showStep(3); await new Promise(r => setTimeout(r, 350));
-      const infoCanvas = await getVisibleCanvas('step-3');
-      showStep(4); // 還原
-      // 簽名
-      const sig1DataUrl = signaturePad1.toDataURL('image/png');
-      const sig2DataUrl = signaturePad2.isEmpty() ? null : signaturePad2.toDataURL('image/png');
-      // 參與者簽名圖
-      let sig1Canvas = document.createElement('canvas');
-      sig1Canvas.width = 800; sig1Canvas.height = 160;
-      let sig1ctx = sig1Canvas.getContext('2d');
-      let sig1img = new window.Image();
-      sig1img.src = sig1DataUrl;
-      await new Promise(res => sig1img.onload = res);
-      sig1ctx.fillStyle = "#fff"; sig1ctx.fillRect(0,0,800,160);
-      sig1ctx.drawImage(sig1img, 20, 15, 760, 110);
-      // 家長簽名圖
-      let sig2Canvas = null;
-      if (sig2DataUrl) {
-        sig2Canvas = document.createElement('canvas');
-        sig2Canvas.width = 800; sig2Canvas.height = 160;
-        let sig2ctx = sig2Canvas.getContext('2d');
-        let sig2img = new window.Image();
-        sig2img.src = sig2DataUrl;
-        await new Promise(res => sig2img.onload = res);
-        sig2ctx.fillStyle = "#fff"; sig2ctx.fillRect(0,0,800,160);
-        sig2ctx.drawImage(sig2img, 20, 15, 760, 110);
-      }
-      showStep(prevStep);
-
-      // 送出日期
-      const dateStr = new Date().toLocaleDateString();
-
-      // 各區塊合併順序
-      const combineSections = [
-        { canvas: terms1Canvas, watermark: true, dateStr },
-        { canvas: terms2Canvas, watermark: true, dateStr },
-        { canvas: infoCanvas, watermark: true, dateStr },
-        { canvas: sig1Canvas, watermark: false, identity: LANGDATA.labelSign1[currentLang] }
-      ];
-      if (sig2Canvas) combineSections.push({ canvas: sig2Canvas, watermark: false, identity: LANGDATA.labelSign2[currentLang] });
-
-      // 合成大圖
-      const allInOneCanvas = await combineCanvasesWithText(combineSections);
-      const imgBase64 = allInOneCanvas.toDataURL('image/png').replace(/^data:image\/png;base64,/, '');
-
-      // 組表單資料
-      const formData = new FormData();
-      formData.append("lang", currentLang);
-      formData.append("姓名", document.getElementById("name").value.trim());
-      formData.append("身分證字號", document.getElementById("idnumber").value.trim());
-      formData.append("性別", document.querySelector('input[name="gender"]:checked')?.value || '');
-      formData.append("出生年月日", dob);
-      formData.append("連絡電話", document.getElementById("phone").value.trim());
-      formData.append("緊急聯絡人", document.getElementById("emergency_contact").value.trim());
-      formData.append("緊急聯絡人關係", document.getElementById("emergency_relation").value.trim());
-      formData.append("緊急聯絡人電話", document.getElementById("emergency_phone").value.trim());
-      formData.append("同意條款1", document.getElementById("agree1").checked ? "Y" : "N");
-      formData.append("同意條款2", document.getElementById("agree2").checked ? "Y" : "N");
-      formData.append("imgBase64", imgBase64); // 改這裡
-
-      // 請改成你的 Apps Script 網址
-      const url = 'https://script.google.com/macros/s/AKfycbz1aQeYA_b2i3o2N9mIsOH3Br6b-YTif4BxrlOoU8iWP6hf5Zvvyiylpt0lwgN6UZC_/exec';
-      const res = await fetch(url, { method: "POST", body: formData });
-      const txt = await res.text();
-      if (res.ok && (txt.trim() === "OK" || txt.toLowerCase().includes("success"))) {
-        showStep(5);
-      } else {
-        alert(LANGDATA.errFail[currentLang] + "\n" + txt);
-      }
-    } catch (error) {
-      alert(LANGDATA.errError[currentLang]);
-      console.error(error);
-    } finally {
+  e.preventDefault();
+  const submitBtn = document.getElementById("submitBtn");
+  if (submitBtn.disabled) return false;
+  submitBtn.disabled = true;
+  submitBtn.textContent = "送出中...";
+  try {
+    if (signaturePad1.isEmpty()) {
+      alert(LANGDATA.errSign1[currentLang]);
       submitBtn.disabled = false;
       submitBtn.textContent = LANGDATA.submitBtn[currentLang];
+      return false;
     }
-  };
+    const dob = document.getElementById("dob").value;
+    let age = 0;
+    if (dob) {
+      const birth = new Date(dob);
+      const today = new Date();
+      age = today.getFullYear() - birth.getFullYear();
+      const m = today.getMonth() - birth.getMonth();
+      if (m < 0 || (m === 0 && today.getDate() < birth.getDate())) age--;
+    }
+    if (age < 18 && signaturePad2.isEmpty()) {
+      alert(LANGDATA.errSign2[currentLang]);
+      submitBtn.disabled = false;
+      submitBtn.textContent = LANGDATA.submitBtn[currentLang];
+      return false;
+    }
+
+    // 蒐集資料
+    const formData = {
+      姓名: document.getElementById("name").value.trim(),
+      身分證字號: document.getElementById("idnumber").value.trim(),
+      性別: document.querySelector('input[name="gender"]:checked')?.value || '',
+      出生年月日: dob,
+      連絡電話: document.getElementById("phone").value.trim(),
+      緊急聯絡人: document.getElementById("emergency_contact").value.trim(),
+      緊急聯絡人關係: document.getElementById("emergency_relation").value.trim(),
+      緊急聯絡人電話: document.getElementById("emergency_phone").value.trim()
+    };
+    const sig1DataUrl = signaturePad1.toDataURL('image/png');
+    const sig2DataUrl = signaturePad2.isEmpty() ? null : signaturePad2.toDataURL('image/png');
+
+    // === 合成圖檔 ===
+    const resultImgDataUrl = await fillFormAndSave({
+      bgImgUrl: 'images/3.jpg',  // 你的底圖路徑，依照實際命名
+      formData,
+      signature1Url: sig1DataUrl,
+      signature2Url: sig2DataUrl
+    });
+
+    // === 下面這段依照你原本的流程，把 base64 丟給伺服器 ===
+    // 組表單資料
+    const fd = new FormData();
+    fd.append("lang", currentLang);
+    fd.append("姓名", formData.姓名);
+    fd.append("身分證字號", formData.身分證字號);
+    fd.append("性別", formData.性別);
+    fd.append("出生年月日", formData.出生年月日);
+    fd.append("連絡電話", formData.連絡電話);
+    fd.append("緊急聯絡人", formData.緊急聯絡人);
+    fd.append("緊急聯絡人關係", formData.緊急聯絡人關係);
+    fd.append("緊急聯絡人電話", formData.緊急聯絡人電話);
+    fd.append("同意條款1", document.getElementById("agree1").checked ? "Y" : "N");
+    fd.append("同意條款2", document.getElementById("agree2").checked ? "Y" : "N");
+    fd.append("imgBase64", resultImgDataUrl.replace(/^data:image\/png;base64,/, ''));
+
+    // Apps Script 網址
+    const url = 'https://script.google.com/macros/s/AKfycbz1aQeYA_b2i3o2N9mIsOH3Br6b-YTif4BxrlOoU8iWP6hf5Zvvyiylpt0lwgN6UZC_/exec';
+    const res = await fetch(url, { method: "POST", body: fd });
+    const txt = await res.text();
+    if (res.ok && (txt.trim() === "OK" || txt.toLowerCase().includes("success"))) {
+      showStep(5);
+    } else {
+      alert(LANGDATA.errFail[currentLang] + "\n" + txt);
+    }
+  } catch (error) {
+    alert(LANGDATA.errError[currentLang]);
+    console.error(error);
+  } finally {
+    submitBtn.disabled = false;
+    submitBtn.textContent = LANGDATA.submitBtn[currentLang];
+  }
 };
+
 
 </script>
 </body>

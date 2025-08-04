@@ -373,8 +373,18 @@ const LANGDATA = {
 };
 
 
-async function fillFormAndSave({ bgImgUrl, formData, signature1Url, signature2Url }) {
-  return new Promise((resolve) => {
+function getDateString() {
+  const now = new Date();
+  return now.getFullYear() + "-" +
+    String(now.getMonth() + 1).padStart(2, "0") + "-" +
+    String(now.getDate()).padStart(2, "0") + " " +
+    String(now.getHours()).padStart(2, "0") + ":" +
+    String(now.getMinutes()).padStart(2, "0");
+}
+
+// 產生一頁 canvas，必要時可畫上資料與簽名
+async function genPageCanvas(bgImgUrl, options = {}) {
+  return new Promise(async (resolve) => {
     const img = new Image();
     img.src = bgImgUrl;
     img.onload = async function () {
@@ -382,68 +392,89 @@ async function fillFormAndSave({ bgImgUrl, formData, signature1Url, signature2Ur
       canvas.width = img.width;
       canvas.height = img.height;
       const ctx = canvas.getContext('2d');
-
-      // 畫底圖
       ctx.drawImage(img, 0, 0);
 
-      // 計算比例（跟原本 1240 寬度相比）
-      const scale = img.width / 1240;
-
-      // 設定字型大小與顏色
-      ctx.font = `bold ${Math.round(24 * scale)}px 'Noto Sans TC', 'Microsoft JhengHei', sans-serif`;
-      ctx.fillStyle = "#1a2533";
-      ctx.textBaseline = "top";
-
-      // 原始設計用的座標（1240 寬度下）
-      const fieldPos = {
-        "姓名": [247, 250],
-        "身分證字號": [326, 332],
-        "性別": [244, 414],
-        "出生年月日": [326, 493],
-        "連絡電話": [297, 572],
-        "緊急聯絡人": [323, 651],
-        "緊急聯絡人關係": [381, 729],
-        "緊急聯絡人電話": [384, 811]
-      };
-      // 簽名圖正確位置
-      const signaturePos = {
-        "參與者簽名": [393, 1215],
-        "家長／監護人簽名": [393, 1630]
-      };
-      const signatureSize = [800, 160];
-
-      // 畫字
-      for (const key in fieldPos) {
-        const [x, y] = fieldPos[key];
-        ctx.fillText(formData[key] || '', x * scale, y * scale);
+      // 若有個資資料要畫
+      if (options.formData) {
+        // 請用你自己的個資座標，這裡以你上面那段為例
+        const scale = img.width / 1240;
+        const fieldPos = {
+          "姓名": [247, 250],
+          "身分證字號": [326, 332],
+          "性別": [244, 414],
+          "出生年月日": [326, 493],
+          "連絡電話": [297, 572],
+          "緊急聯絡人": [323, 651],
+          "緊急聯絡人關係": [381, 729],
+          "緊急聯絡人電話": [384, 811]
+        };
+        ctx.font = `bold ${Math.round(24 * scale)}px 'Noto Sans TC', 'Microsoft JhengHei', sans-serif`;
+        ctx.fillStyle = "#1a2533";
+        ctx.textBaseline = "top";
+        for (const key in fieldPos) {
+          const [x, y] = fieldPos[key];
+          ctx.fillText(options.formData[key] || '', x * scale, y * scale);
+        }
       }
-      // 畫簽名
-      if (signature1Url) {
+      // 若有簽名要畫
+      if (options.signature1Url) {
+        const scale = img.width / 1240;
+        const signaturePos = [393, 1215];
+        const signatureSize = [800, 160];
         const sig1Img = new Image();
-        sig1Img.src = signature1Url;
+        sig1Img.src = options.signature1Url;
         await new Promise(res => sig1Img.onload = res);
         ctx.drawImage(sig1Img,
-          signaturePos["參與者簽名"][0] * scale,
-          signaturePos["參與者簽名"][1] * scale,
+          signaturePos[0] * scale,
+          signaturePos[1] * scale,
           signatureSize[0] * scale,
           signatureSize[1] * scale
         );
       }
-      if (signature2Url) {
+      if (options.signature2Url) {
+        const scale = img.width / 1240;
+        const signaturePos = [393, 1630];
+        const signatureSize = [800, 160];
         const sig2Img = new Image();
-        sig2Img.src = signature2Url;
+        sig2Img.src = options.signature2Url;
         await new Promise(res => sig2Img.onload = res);
         ctx.drawImage(sig2Img,
-          signaturePos["家長／監護人簽名"][0] * scale,
-          signaturePos["家長／監護人簽名"][1] * scale,
+          signaturePos[0] * scale,
+          signaturePos[1] * scale,
           signatureSize[0] * scale,
           signatureSize[1] * scale
         );
       }
-      // 回傳圖片 Base64
-      resolve(canvas.toDataURL("image/png"));
+
+      // 畫右下角日期
+      ctx.font = "bold 28px 'Noto Sans TC', 'Microsoft JhengHei', sans-serif";
+      ctx.fillStyle = "rgba(80,100,170,0.7)";
+      ctx.textAlign = "right";
+      ctx.textBaseline = "bottom";
+      ctx.fillText("送出日期: " + getDateString(), canvas.width - 36, canvas.height - 32);
+
+      resolve(canvas);
     };
-  }); // <--- 這裡你漏掉！
+  });
+}
+
+// 核心：產生三張 canvas，再合成成一張直式長圖
+async function createFilledPagesAndMerge({ bgImgUrls, formData, signature1Url, signature2Url }) {
+  const page1 = await genPageCanvas(bgImgUrls[0]); // 條款
+  const page2 = await genPageCanvas(bgImgUrls[1]); // 安全規範
+  const page3 = await genPageCanvas(bgImgUrls[2], { formData, signature1Url, signature2Url }); // 個資&簽名
+
+  // 合成長 canvas
+  const totalHeight = page1.height + page2.height + page3.height;
+  const canvas = document.createElement('canvas');
+  canvas.width = page1.width;
+  canvas.height = totalHeight;
+  const ctx = canvas.getContext('2d');
+  ctx.drawImage(page1, 0, 0);
+  ctx.drawImage(page2, 0, page1.height);
+  ctx.drawImage(page3, 0, page1.height + page2.height);
+
+  return canvas.toDataURL("image/png");
 }
 
 
@@ -611,7 +642,7 @@ window.onload = function () {
     return outCanvas;
   }
 
-  document.getElementById("waiverForm").onsubmit = async function (e) {
+ document.getElementById("waiverForm").onsubmit = async function (e) {
   e.preventDefault();
   const submitBtn = document.getElementById("submitBtn");
   if (submitBtn.disabled) return false;
@@ -640,7 +671,7 @@ window.onload = function () {
       return false;
     }
 
-    // 蒐集資料
+    // 收集資料
     const formData = {
       姓名: document.getElementById("name").value.trim(),
       身分證字號: document.getElementById("idnumber").value.trim(),
@@ -654,16 +685,16 @@ window.onload = function () {
     const sig1DataUrl = signaturePad1.toDataURL('image/png');
     const sig2DataUrl = signaturePad2.isEmpty() ? null : signaturePad2.toDataURL('image/png');
 
-    // === 合成圖檔 ===
-    const resultImgDataUrl = await fillFormAndSave({
-      bgImgUrl: 'images/3.jpg',  // 你的底圖路徑，依照實際命名
+    // ==== 合成三張長圖 ====
+    const bgImgUrls = ['images/1.jpg', 'images/2.jpg', 'images/3.jpg']; // 根據你圖片命名
+    const resultImgDataUrl = await createFilledPagesAndMerge({
+      bgImgUrls,
       formData,
       signature1Url: sig1DataUrl,
       signature2Url: sig2DataUrl
     });
 
-    // === 下面這段依照你原本的流程，把 base64 丟給伺服器 ===
-    // 組表單資料
+    // === 下面不變 ===
     const fd = new FormData();
     fd.append("lang", currentLang);
     fd.append("姓名", formData.姓名);
@@ -678,7 +709,6 @@ window.onload = function () {
     fd.append("同意條款2", document.getElementById("agree2").checked ? "Y" : "N");
     fd.append("imgBase64", resultImgDataUrl.replace(/^data:image\/png;base64,/, ''));
 
-    // Apps Script 網址
     const url = 'https://script.google.com/macros/s/AKfycbz1aQeYA_b2i3o2N9mIsOH3Br6b-YTif4BxrlOoU8iWP6hf5Zvvyiylpt0lwgN6UZC_/exec';
     const res = await fetch(url, { method: "POST", body: fd });
     const txt = await res.text();
@@ -695,6 +725,7 @@ window.onload = function () {
     submitBtn.textContent = LANGDATA.submitBtn[currentLang];
   }
 };
+
 
 };
 </script>

@@ -408,15 +408,15 @@ async function genPageCanvas(bgImgUrl, options = {}) {
           "緊急聯絡人關係": [1089,2249],
           "緊急聯絡人電話": [1089,2493],
         };
-        ctx.font = `bold 48px 'Noto Sans TC', 'Microsoft JhengHei', sans-serif`; // 字體大小自己微調
-        ctx.fillStyle = "#1a2533";
-        ctx.textBaseline = "top";
-        ctx.textAlign = "left";
-        for (const key in fieldPos) {
-          const [x, y] = fieldPos[key];
-          ctx.fillText(options.formData[key] || '', x, y);
-        }
-      }
+         ctx.font = `bold 60px 'Noto Sans TC', 'Microsoft JhengHei', sans-serif`;
+  ctx.fillStyle = "#1a2533";
+  ctx.textBaseline = "top";
+  ctx.textAlign = "left";
+  for (const key in fieldPos) {
+    const [x, y] = fieldPos[key];
+    ctx.fillText(options.formData[key] || '', x, y - 15);
+  }
+}
 
       // 若有簽名要畫（同理！不需要再縮放）
       if (options.signature1Url) {

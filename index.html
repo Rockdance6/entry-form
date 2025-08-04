@@ -396,31 +396,32 @@ async function genPageCanvas(bgImgUrl, options = {}) {
 
       // 若有個資資料要畫
       if (options.formData) {
-        // 請用你自己的個資座標，這裡以你上面那段為例
-        const scale = img.width / 1240;
-        const fieldPos = {
-          "姓名": [247, 250],
-          "身分證字號": [326, 332],
-          "性別": [244, 414],
-          "出生年月日": [326, 493],
-          "連絡電話": [297, 572],
-          "緊急聯絡人": [323, 651],
-          "緊急聯絡人關係": [381, 729],
-          "緊急聯絡人電話": [384, 811]
-        };
-        ctx.font = `bold ${Math.round(24 * scale)}px 'Noto Sans TC', 'Microsoft JhengHei', sans-serif`;
-        ctx.fillStyle = "#1a2533";
-        ctx.textBaseline = "top";
-        for (const key in fieldPos) {
-          const [x, y] = fieldPos[key];
-          ctx.fillText(options.formData[key] || '', x * scale, y * scale);
-        }
-      }
+  const scale = img.width / 1240;
+  const fieldPos = {
+    "姓名": [164,  126],
+    "身分證字號": [222,  174],
+    "性別": [164,  222],
+    "出生年月日": [222,  270],
+    "連絡電話":  [222,  318],
+    "緊急聯絡人": [222,  366],
+    "緊急聯絡人關係":  [280,  414],
+    "緊急聯絡人電話":  [280,  462],
+  };
+  ctx.font = `bold ${Math.round(24 * scale)}px 'Noto Sans TC', 'Microsoft JhengHei', sans-serif`;
+  ctx.fillStyle = "#1a2533";
+  ctx.textBaseline = "top";
+  ctx.textAlign = "left"; // <- 一定要加
+  for (const key in fieldPos) {
+    const [x, y] = fieldPos[key];
+    ctx.fillText(options.formData[key] || '', x * scale, y * scale);
+  }
+}
+
       // 若有簽名要畫
       if (options.signature1Url) {
         const scale = img.width / 1240;
-        const signaturePos = [393, 1215];
-        const signatureSize = [800, 160];
+        const signaturePos = [90,  555];
+        const signatureSize =  [1060, 160];
         const sig1Img = new Image();
         sig1Img.src = options.signature1Url;
         await new Promise(res => sig1Img.onload = res);
@@ -433,8 +434,8 @@ async function genPageCanvas(bgImgUrl, options = {}) {
       }
       if (options.signature2Url) {
         const scale = img.width / 1240;
-        const signaturePos = [393, 1630];
-        const signatureSize = [800, 160];
+        const signaturePos = [90,  778];
+        const signatureSize =  [1060, 160];
         const sig2Img = new Image();
         sig2Img.src = options.signature2Url;
         await new Promise(res => sig2Img.onload = res);

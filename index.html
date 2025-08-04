@@ -409,13 +409,13 @@ async function genPageCanvas(bgImgUrl, options = {}) {
           "緊急聯絡人關係": [1089, 2249],
           "緊急聯絡人電話": [1089, 2493],
         };
-        ctx.font = `bold ${Math.round(70 * scale)}px 'Noto Sans TC', 'Microsoft JhengHei', sans-serif`;
+        ctx.font = `bold ${Math.round(80 * scale)}px 'Noto Sans TC', 'Microsoft JhengHei', sans-serif`;
         ctx.fillStyle = "#1a2533";
         ctx.textBaseline = "top";
         ctx.textAlign = "left";
         for (const key in fieldPos) {
           const [x, y] = fieldPos[key];
-          ctx.fillText(options.formData[key] || '', x * scale, (y - 20) * scale);
+          ctx.fillText(options.formData[key] || '', x * scale, (y - 30) * scale);
         }
       }
 
@@ -737,5 +737,6 @@ window.onload = function () {
 };
 </script>
 </body>
+
 
 </html>

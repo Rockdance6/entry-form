@@ -393,14 +393,14 @@ async function fillFormAndSave({ bgImgUrl, formData, signature1Url, signature2Ur
 
       // 欄位座標
       const fieldPos = {
-        姓名: [150, 130],
-        身分證字號: [150, 180],
-        性別: [150, 230],
-        出生年月日: [150, 280],
-        連絡電話: [150, 330],
-        緊急聯絡人: [150, 380],
-        緊急聯絡人關係: [150, 430],
-        緊急聯絡人電話: [150, 480]
+          姓名: [79, 62],
+          身分證字號: [79, 86],
+          性別: [79, 110],
+          出生年月日: [79, 134],
+          連絡電話: [79, 158],
+          緊急聯絡人: [79, 182],
+          緊急聯絡人關係: [79, 206],
+          緊急聯絡人電話: [79, 230]
       };
 
       // 寫資料
@@ -414,14 +414,14 @@ async function fillFormAndSave({ bgImgUrl, formData, signature1Url, signature2Ur
         const sig1Img = new window.Image();
         sig1Img.src = signature1Url;
         await new Promise(res => sig1Img.onload = res);
-        ctx.drawImage(sig1Img, 150, 560, 600, 100);
+        ctx.drawImage(sig1Img, 79, 269, 318, 53);
       }
       // 家長（如果有）
       if (signature2Url) {
         const sig2Img = new window.Image();
         sig2Img.src = signature2Url;
         await new Promise(res => sig2Img.onload = res);
-        ctx.drawImage(sig2Img, 150, 690, 600, 100);
+        ctx.drawImage(sig2Img, 79, 331, 318, 53);
       }
 
       // 完成

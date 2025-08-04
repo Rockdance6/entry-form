@@ -388,66 +388,65 @@ async function genPageCanvas(bgImgUrl, options = {}) {
     const img = new Image();
     img.src = bgImgUrl;
     img.onload = async function () {
-      console.log('底圖寬高:', img.width, img.height); 
+      const targetWidth = 1200;
+      const scale = targetWidth / img.width;
+      const targetHeight = Math.round(img.height * scale);
+
       const canvas = document.createElement('canvas');
-      canvas.width = img.width;
-      canvas.height = img.height;
+      canvas.width = targetWidth;
+      canvas.height = targetHeight;
       const ctx = canvas.getContext('2d');
-      ctx.drawImage(img, 0, 0);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-      // 若有個資資料要畫
       if (options.formData) {
-        // 注意：這裡不用 scale，直接用絕對座標（因為你小畫家也是這尺寸）
         const fieldPos = {
-          "姓名": [677,777],
-          "身分證字號": [925,1021],
-          "性別": [681,1269],
-          "出生年月日": [925,1513],
-          "連絡電話": [845,1757],
-          "緊急聯絡人": [925,2001],
-          "緊急聯絡人關係": [1089,2249],
-          "緊急聯絡人電話": [1089,2493],
+          "姓名": [677, 777],
+          "身分證字號": [925, 1021],
+          "性別": [681, 1269],
+          "出生年月日": [925, 1513],
+          "連絡電話": [845, 1757],
+          "緊急聯絡人": [925, 2001],
+          "緊急聯絡人關係": [1089, 2249],
+          "緊急聯絡人電話": [1089, 2493],
         };
-         ctx.font = `bold 60px 'Noto Sans TC', 'Microsoft JhengHei', sans-serif`;
-  ctx.fillStyle = "#1a2533";
-  ctx.textBaseline = "top";
-  ctx.textAlign = "left";
-  for (const key in fieldPos) {
-    const [x, y] = fieldPos[key];
-    ctx.fillText(options.formData[key] || '', x, y - 15);
-  }
-}
+        ctx.font = `bold ${Math.round(70 * scale)}px 'Noto Sans TC', 'Microsoft JhengHei', sans-serif`;
+        ctx.fillStyle = "#1a2533";
+        ctx.textBaseline = "top";
+        ctx.textAlign = "left";
+        for (const key in fieldPos) {
+          const [x, y] = fieldPos[key];
+          ctx.fillText(options.formData[key] || '', x * scale, (y - 20) * scale);
+        }
+      }
 
-      // 若有簽名要畫（同理！不需要再縮放）
       if (options.signature1Url) {
-        const signaturePos = [532,  3732];
-        const signatureSize =  [1060, 160];
+        const signaturePos = [532, 3732];
+        const signatureSize = [1060, 160];
         const sig1Img = new Image();
         sig1Img.src = options.signature1Url;
         await new Promise(res => sig1Img.onload = res);
         ctx.drawImage(sig1Img,
-          signaturePos[0],
-          signaturePos[1],
-          signatureSize[0],
-          signatureSize[1]
+          signaturePos[0] * scale,
+          signaturePos[1] * scale,
+          signatureSize[0] * scale,
+          signatureSize[1] * scale
         );
       }
       if (options.signature2Url) {
-        const signaturePos = [532,  5000];
-        const signatureSize =  [1060, 160];
+        const signaturePos = [532, 5000];
+        const signatureSize = [1060, 160];
         const sig2Img = new Image();
         sig2Img.src = options.signature2Url;
         await new Promise(res => sig2Img.onload = res);
         ctx.drawImage(sig2Img,
-          signaturePos[0],
-          signaturePos[1],
-          signatureSize[0],
-          signatureSize[1]
+          signaturePos[0] * scale,
+          signaturePos[1] * scale,
+          signatureSize[0] * scale,
+          signatureSize[1] * scale
         );
       }
 
-      // 畫右下角日期
-      ctx.font = "bold 48px 'Noto Sans TC', 'Microsoft JhengHei', sans-serif";
+      ctx.font = `bold ${Math.round(48 * scale)}px 'Noto Sans TC', 'Microsoft JhengHei', sans-serif`;
       ctx.fillStyle = "rgba(80,100,170,0.7)";
       ctx.textAlign = "right";
       ctx.textBaseline = "bottom";
@@ -455,8 +454,15 @@ async function genPageCanvas(bgImgUrl, options = {}) {
 
       resolve(canvas);
     };
+    // 圖片載入錯誤防呆
+    img.onerror = function () {
+      alert("底圖無法載入，請確認圖片路徑。");
+      resolve(null);
+    }
   });
 }
+
+
 
 
 // 核心：產生三張 canvas，再合成成一張直式長圖

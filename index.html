@@ -401,13 +401,13 @@ async function genPageCanvas(bgImgUrl, options = {}) {
       if (options.formData) {
         const fieldPos = {
           "姓名": [677, 777],
-          "身分證字號": [925, 1021],
+          "身分證字號": [925, 1000],
           "性別": [681, 1269],
           "出生年月日": [925, 1513],
           "連絡電話": [845, 1757],
           "緊急聯絡人": [925, 2001],
           "緊急聯絡人關係": [1089, 2249],
-          "緊急聯絡人電話": [1089, 2493],
+          "緊急聯絡人電話": [1089, 2480],
         };
         ctx.font = `bold ${Math.round(80 * scale)}px 'Noto Sans TC', 'Microsoft JhengHei', sans-serif`;
         ctx.fillStyle = "#1a2533";
@@ -740,3 +740,4 @@ window.onload = function () {
 
 
 </html>
+

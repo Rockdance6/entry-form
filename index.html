@@ -37,6 +37,14 @@ h2.page-title { text-align:center; color:#2064bb; margin:0 0 1em 0; font-size:1.
 .form-field label { font-weight:500; margin-bottom:0.18em;}
 .form-field input[type="text"], .form-field input[type="tel"], .form-field input[type="date"] { font-size:1.08em; padding:0.39em 0.6em; border:1px solid #bdd3ef; border-radius:6px; background:#f8fbfd; margin-top:0.1em; margin-bottom:0.06em; width:100%; box-sizing:border-box; }
 @media (max-width:600px) { .form-field { gap:0.25em; margin-bottom:0.74em;} .form-field input { font-size:0.99em;}}
+/* 強制所有簽名相關元素無法被選取、長按、複製 */
+.canvas-block, .canvas-block *, .sign-canvas, .canvas-block label {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -webkit-touch-callout: none !important;
+  -webkit-tap-highlight-color: transparent !important;
+}
+
 </style>
 </head>
 <body>
@@ -123,12 +131,12 @@ h2.page-title { text-align:center; color:#2064bb; margin:0 0 1em 0; font-size:1.
       <h2 class="page-title" id="pageTitle4"></h2>
       <div class="canvas-block">
         <label id="labelSign1"></label>
-        <canvas id="signature1" class="sign-canvas" width="0" height="0"></canvas>
+        <canvas id="signature1" class="sign-canvas" width="600" height="120"></canvas>
         <button type="button" class="clear-btn" id="clear1"></button>
       </div>
       <div class="canvas-block">
         <label id="labelSign2"></label>
-        <canvas id="signature2" class="sign-canvas" width="0" height="0"></canvas>
+        <canvas id="signature2" class="sign-canvas" width="600" height="120"></canvas>
         <button type="button" class="clear-btn" id="clear2"></button>
       </div>
       <div class="nav-btns">
@@ -740,4 +748,3 @@ window.onload = function () {
 
 
 </html>
-
